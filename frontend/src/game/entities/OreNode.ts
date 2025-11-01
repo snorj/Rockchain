@@ -18,9 +18,14 @@ export class OreNode extends Phaser.GameObjects.Sprite {
     y: number,
     oreType: OreType
   ) {
-    super(scene, x, y, `ore-${oreType}`);
+    // Randomly select a frame from the specified range for each ore type
+    const frame = OreNode.getRandomFrame(oreType);
+    super(scene, x, y, `ore-${oreType}-${frame}`);
     
     this.oreType = oreType;
+    
+    // Set scale for better visibility
+    this.setScale(2);
     
     // Make interactive with hand cursor
     this.setInteractive({ useHandCursor: true });
@@ -38,9 +43,25 @@ export class OreNode extends Phaser.GameObjects.Sprite {
     });
     
     scene.add.existing(this);
-    
-    // Set scale for better visibility
-    this.setScale(1.5);
+  }
+
+  /**
+   * Gets a random frame number for the specified ore type
+   */
+  private static getRandomFrame(oreType: OreType): number {
+    switch (oreType) {
+      case 'coal':
+        // Coal: randomly select from frames 5, 6, 7, 8
+        return Phaser.Math.Between(5, 8);
+      case 'iron':
+        // Iron: randomly select from frames 7, 8
+        return Phaser.Math.Between(7, 8);
+      case 'diamond':
+        // Diamond: randomly select from frames 5, 6, 7, 8
+        return Phaser.Math.Between(5, 8);
+      default:
+        return 5;
+    }
   }
 
   /**
@@ -56,11 +77,11 @@ export class OreNode extends Phaser.GameObjects.Sprite {
     // Create and show progress bar
     this.createProgressBar();
     
-    // Play mining animation
-    this.play(`mine-${this.oreType}`);
-    
-    // Listen for animation completion
-    this.once('animationcomplete', this.onMiningComplete, this);
+    // Wait for mining duration, then complete (no animation)
+    const duration = ORE_CONFIG.MINING_TIMES[this.oreType];
+    this.scene.time.delayedCall(duration, () => {
+      this.onMiningComplete();
+    });
   }
 
   /**
@@ -142,8 +163,9 @@ export class OreNode extends Phaser.GameObjects.Sprite {
       ease: 'Power2'
     });
     
-    // Particles or sparkle effect
-    const particles = this.scene.add.particles(this.x, this.y, 'ore-' + this.oreType, {
+    // Particles or sparkle effect using inventory icon
+    const particleTexture = `inventory-${this.oreType}`;
+    const particles = this.scene.add.particles(this.x, this.y, particleTexture, {
       speed: { min: 50, max: 100 },
       scale: { start: 0.3, end: 0 },
       lifespan: 500,

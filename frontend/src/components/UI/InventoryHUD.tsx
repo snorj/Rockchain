@@ -13,7 +13,9 @@ export const InventoryHUD = () => {
       <h3 className="inventory-title">Inventory</h3>
       <div className="inventory-grid">
         <div className="ore-count coal">
-          <div className="ore-icon">⚫</div>
+          <div className="ore-icon">
+            <img src="/assets/sprites/ores/coal/coal04.png" alt="Coal" />
+          </div>
           <div className="ore-info">
             <span className="ore-name">Coal</span>
             <span className="ore-amount">{inventory.coal}</span>
@@ -21,7 +23,9 @@ export const InventoryHUD = () => {
         </div>
         
         <div className="ore-count iron">
-          <div className="ore-icon">🟤</div>
+          <div className="ore-icon">
+            <img src="/assets/sprites/ores/iron/iron09.png" alt="Iron" />
+          </div>
           <div className="ore-info">
             <span className="ore-name">Iron</span>
             <span className="ore-amount">{inventory.iron}</span>
@@ -29,7 +33,9 @@ export const InventoryHUD = () => {
         </div>
         
         <div className="ore-count diamond">
-          <div className="ore-icon">💎</div>
+          <div className="ore-icon">
+            <img src="/assets/sprites/ores/diamond/diamond09.png" alt="Diamond" />
+          </div>
           <div className="ore-info">
             <span className="ore-name">Diamond</span>
             <span className="ore-amount">{inventory.diamond}</span>
