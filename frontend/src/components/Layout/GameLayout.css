@@ -1,0 +1,126 @@
+.game-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+  color: white;
+}
+
+.game-header {
+  background: rgba(26, 26, 46, 0.8);
+  padding: 20px;
+  text-align: center;
+  border-bottom: 2px solid rgba(255, 204, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.game-logo {
+  margin: 0;
+  font-size: 42px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ffcc00, #ff9900);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 4px;
+}
+
+.game-subtitle {
+  margin: 8px 0 0 0;
+  font-size: 16px;
+  color: #cccccc;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.game-main {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-left {
+  animation: slideInLeft 0.5s ease;
+}
+
+.sidebar-right {
+  animation: slideInRight 0.5s ease;
+}
+
+.game-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 900px;
+  animation: fadeIn 0.8s ease;
+}
+
+.game-footer {
+  background: rgba(26, 26, 46, 0.8);
+  padding: 16px;
+  text-align: center;
+  border-top: 2px solid rgba(255, 204, 0, 0.3);
+  color: #999999;
+  font-size: 14px;
+}
+
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .game-main {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .sidebar-left,
+  .sidebar-right {
+    animation: fadeIn 0.5s ease;
+  }
+}
+

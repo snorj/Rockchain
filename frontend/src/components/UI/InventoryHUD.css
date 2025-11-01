@@ -1,0 +1,90 @@
+.inventory-hud {
+  background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 204, 0, 0.3);
+  min-width: 250px;
+}
+
+.inventory-title {
+  color: #ffcc00;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 16px 0;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.inventory-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ore-count {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.ore-count:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.ore-count.coal:hover {
+  border-color: rgba(100, 100, 100, 0.5);
+}
+
+.ore-count.iron:hover {
+  border-color: rgba(205, 127, 50, 0.5);
+}
+
+.ore-count.diamond:hover {
+  border-color: rgba(0, 191, 255, 0.5);
+}
+
+.ore-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.ore-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.ore-name {
+  color: #cccccc;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ore-amount {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Animation for count changes */
+@keyframes countPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+.ore-amount {
+  animation: countPulse 0.3s ease;
+}
+
