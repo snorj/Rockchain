@@ -21,10 +21,11 @@ Players mine ores in a dungeon scene, sell them for **on-chain Gold Tokens (GLD)
 ## 📂 Project Structure
 
 - `/context/` - Design docs, PRD, and attribution
-- `/frontend/` - React game (to be built)
-- `/contracts/` - Solidity contracts (to be built)
-- `/assets/` - Selected sprites from Hana Caraka pack
+- `/frontend/` - React game (being built by frontend team)
+- `/contracts/` - ✅ Solidity contracts (COMPLETE - ready to deploy)
 - `/Hana Caraka - Dungeon & Mining/` - Full asset pack
+- `DEPLOYMENT.md` - Complete deployment guide
+- `FRONTEND_INTEGRATION.md` - Integration guide for frontend team
 
 ## 📖 Documentation
 
@@ -42,7 +43,34 @@ Players mine ores in a dungeon scene, sell them for **on-chain Gold Tokens (GLD)
 
 ## 🚀 Quick Start
 
-*(Coming soon - project in design phase)*
+### Smart Contracts (Ready to Deploy!)
+
+```bash
+# 1. Set up environment
+cd contracts
+npm install
+
+# 2. Configure .env file (see .env.example)
+# Add your Sepolia private key, Etherscan API key, and Privy App ID
+
+# 3. Compile contracts
+npm run compile
+
+# 4. Run tests
+npm test
+
+# 5. Deploy to Sepolia
+npm run deploy:sepolia
+
+# 6. Verify on Etherscan
+npm run verify:sepolia
+```
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
+
+### Frontend Integration
+
+Frontend team: See [FRONTEND_INTEGRATION.md](FRONTEND_INTEGRATION.md) for integration guide.
 
 ## 📜 License
 
