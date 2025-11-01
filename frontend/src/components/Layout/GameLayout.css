@@ -9,9 +9,22 @@
 .game-header {
   background: rgba(26, 26, 46, 0.8);
   padding: 20px;
-  text-align: center;
   border-bottom: 2px solid rgba(255, 204, 0, 0.3);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.header-left {
+  flex: 1;
+  text-align: left;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
 }
 
 .game-logo {

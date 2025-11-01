@@ -19,20 +19,19 @@ const config: HardhatUserConfig = {
   },
   networks: {
     sepolia: {
-      url: "https://rpc.sepolia.org",
+      url: process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com",
       accounts: process.env.SEPOLIA_PRIVATE_KEY 
         ? [process.env.SEPOLIA_PRIVATE_KEY]
         : [],
       chainId: 11155111,
+      timeout: 60000,
     },
     hardhat: {
       chainId: 31337,
     },
   },
   etherscan: {
-    apiKey: {
-      sepolia: process.env.ETHERSCAN_API_KEY || "",
-    },
+    apiKey: process.env.ETHERSCAN_API_KEY || "",
   },
   paths: {
     sources: "./contracts",

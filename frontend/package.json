@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@privy-io/react-auth": "^3.5.0",
     "phaser": "^3.90.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "viem": "^2.38.5",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

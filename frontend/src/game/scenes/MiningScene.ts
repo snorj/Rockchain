@@ -34,11 +34,6 @@ export class MiningScene extends Phaser.Scene {
     
     // Listen for ore mined events
     this.events.on('ore-mined', this.handleOreMined, this);
-    
-    // Debug info
-    if (import.meta.env.DEV) {
-      this.createDebugInfo();
-    }
   }
 
   /**
@@ -156,32 +151,6 @@ export class MiningScene extends Phaser.Scene {
     // Spawn a replacement ore after a short delay
     this.time.delayedCall(500, () => {
       this.oreSpawner.spawnRandomOre();
-    });
-  }
-
-  /**
-   * Creates debug information overlay (dev mode only)
-   */
-  private createDebugInfo() {
-    const debugText = this.add.text(10, 10, '', {
-      fontSize: '14px',
-      color: '#00ff00',
-      fontFamily: 'monospace',
-      backgroundColor: '#000000',
-      padding: { x: 5, y: 5 }
-    });
-    
-    // Update debug info every frame
-    this.events.on('update', () => {
-      const fps = Math.round(this.game.loop.actualFps);
-      const oreCount = this.oreSpawner.getActiveOreCount();
-      const inventory = useGameStore.getState().inventory;
-      
-      debugText.setText([
-        `FPS: ${fps}`,
-        `Active Ores: ${oreCount}`,
-        `Inventory: C:${inventory.coal} I:${inventory.iron} D:${inventory.diamond}`
-      ]);
     });
   }
 

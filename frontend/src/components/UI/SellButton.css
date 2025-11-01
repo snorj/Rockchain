@@ -80,6 +80,17 @@
   font-style: italic;
 }
 
+.sell-error {
+  font-size: 12px;
+  color: #ff6b6b;
+  margin: 0;
+  text-align: center;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
 /* Spinner animation for loading state */
 .spinner {
   width: 16px;
