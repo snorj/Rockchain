@@ -1,4 +1,4 @@
-# MineChain: Dungeon Rush
+# Rockchain
 
 A browser-based pixel-art mining game demonstrating **Privy Smart Wallets (ERC-4337)** and **gasless on-chain gameplay**.
 
