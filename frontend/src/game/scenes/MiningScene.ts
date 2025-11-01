@@ -10,6 +10,7 @@ import type { OreType } from '../../utils/constants';
  */
 export class MiningScene extends Phaser.Scene {
   private oreSpawner!: OreSpawner;
+  private background!: Phaser.GameObjects.TileSprite;
 
   constructor() {
     super({ key: 'MiningScene' });
@@ -18,8 +19,14 @@ export class MiningScene extends Phaser.Scene {
   create() {
     console.log('🎮 MiningScene started');
     
-    // Simple dark background (no tiles)
-    this.cameras.main.setBackgroundColor('#1a1a2e');
+    // Add tiled background
+    this.createBackground();
+    
+    // Add decorative torches
+    this.createTorches();
+    
+    // Add title text
+    this.createTitleText();
     
     // Initialize ore spawner
     this.oreSpawner = new OreSpawner(this);
@@ -34,6 +41,107 @@ export class MiningScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * Creates the cave background using tiled sprites
+   */
+  private createBackground() {
+    // Cave wall background
+    this.background = this.add.tileSprite(
+      400, 300,
+      800, 600,
+      'wall-cave'
+    );
+    this.background.setAlpha(0.8);
+    
+    // Add ground overlay
+    const ground = this.add.tileSprite(
+      400, 300,
+      800, 600,
+      'ground'
+    );
+    ground.setAlpha(0.3);
+    
+    // Subtle background animation
+    this.tweens.add({
+      targets: this.background,
+      tilePositionX: 10,
+      duration: 20000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+  }
+
+  /**
+   * Creates decorative animated torches
+   */
+  private createTorches() {
+    // Left torches
+    const torch1 = this.add.sprite(60, 80, 'torch-1');
+    torch1.setScale(2);
+    torch1.play('torch-flicker');
+    
+    const torch2 = this.add.sprite(60, 520, 'torch-1');
+    torch2.setScale(2);
+    torch2.play('torch-flicker');
+    
+    // Right torches
+    const torch3 = this.add.sprite(740, 80, 'torch-1');
+    torch3.setScale(2);
+    torch3.play('torch-flicker');
+    
+    const torch4 = this.add.sprite(740, 520, 'torch-1');
+    torch4.setScale(2);
+    torch4.play('torch-flicker');
+    
+    // Add glow effect to torches
+    [torch1, torch2, torch3, torch4].forEach(torch => {
+      const glow = this.add.circle(torch.x, torch.y + 5, 30, 0xff6600, 0.1);
+      
+      // Pulsing glow
+      this.tweens.add({
+        targets: glow,
+        alpha: 0.2,
+        scale: 1.2,
+        duration: 1000,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.easeInOut'
+      });
+    });
+  }
+
+  /**
+   * Creates title text
+   */
+  private createTitleText() {
+    const title = this.add.text(400, 30, 'ROCKCHAIN MINING', {
+      fontSize: '32px',
+      color: '#ffcc00',
+      fontFamily: 'Arial Black',
+      stroke: '#000000',
+      strokeThickness: 4
+    });
+    title.setOrigin(0.5);
+    
+    // Subtle pulse effect
+    this.tweens.add({
+      targets: title,
+      scale: 1.05,
+      duration: 2000,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
+    
+    // Instructions
+    const instructions = this.add.text(400, 570, 'Click ores to mine them!', {
+      fontSize: '16px',
+      color: '#cccccc',
+      fontFamily: 'Arial'
+    });
+    instructions.setOrigin(0.5);
+  }
 
   /**
    * Handles ore mined event

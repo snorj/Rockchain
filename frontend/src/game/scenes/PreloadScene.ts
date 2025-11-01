@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { ANIMATION_CONFIG } from '../../utils/constants';
+import { ORE_CONFIG, ANIMATION_CONFIG } from '../../utils/constants';
 
 /**
  * PreloadScene handles loading all game assets
@@ -14,33 +14,70 @@ export class PreloadScene extends Phaser.Scene {
     // Create loading bar
     this.createLoadingBar();
 
-    // Load individual ore frames (8 frames per ore type: 0-7)
-    const oreTypes = ['coal', 'iron', 'diamond'];
+    // Load ore sprite sheets (8 frames each, horizontal layout)
+    this.load.spritesheet('ore-coal', '/assets/sprites/ores/coal-sheet.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+      endFrame: ANIMATION_CONFIG.ORE_FRAME_COUNT - 1
+    });
     
-    oreTypes.forEach(oreType => {
-      for (let i = 0; i < ANIMATION_CONFIG.ORE_FRAME_COUNT; i++) {
-        this.load.image(
-          `ore-${oreType}-${i}`,
-          `/assets/sprites/ores/${oreType}_${i}.png`
-        );
-      }
+    this.load.spritesheet('ore-iron', '/assets/sprites/ores/iron-sheet.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+      endFrame: ANIMATION_CONFIG.ORE_FRAME_COUNT - 1
     });
-
-    // Export inventory icon textures to window for React components to use
-    this.load.on('complete', () => {
-      const textures = {
-        coal: `/assets/sprites/ores/coal_4.png`,
-        iron: `/assets/sprites/ores/iron_7.png`,
-        diamond: `/assets/sprites/ores/diamond_7.png`
-      };
-      (window as any).oreIconTextures = textures;
+    
+    this.load.spritesheet('ore-diamond', '/assets/sprites/ores/diamond-sheet.png', {
+      frameWidth: 32,
+      frameHeight: 32,
+      endFrame: ANIMATION_CONFIG.ORE_FRAME_COUNT - 1
     });
+    
+    // Load background tiles
+    this.load.image('wall-cave', '/assets/tilesets/Wall - cave.png');
+    this.load.image('ground', '/assets/tilesets/Ground - normal.png');
+    
+    // Load torch sprites
+    this.load.image('torch-1', '/assets/sprites/props/torch 1.png');
+    this.load.image('torch-2', '/assets/sprites/props/torch 2.png');
   }
 
   create() {
+    // Create mining animations for each ore type
+    this.createMiningAnimation('coal', ORE_CONFIG.MINING_TIMES.coal);
+    this.createMiningAnimation('iron', ORE_CONFIG.MINING_TIMES.iron);
+    this.createMiningAnimation('diamond', ORE_CONFIG.MINING_TIMES.diamond);
+    
+    // Create torch flicker animation
+    this.anims.create({
+      key: 'torch-flicker',
+      frames: [
+        { key: 'torch-1' },
+        { key: 'torch-2' }
+      ],
+      frameRate: 1000 / ANIMATION_CONFIG.TORCH_FLICKER_SPEED,
+      repeat: -1
+    });
+    
     // All assets loaded, start the main game scene
-    // Note: We're using individual frame images instead of sprite sheet animations
     this.scene.start('MiningScene');
+  }
+
+  /**
+   * Creates a mining animation for a specific ore type
+   * @param oreType - Type of ore (coal, iron, diamond)
+   * @param duration - Animation duration in milliseconds
+   */
+  private createMiningAnimation(oreType: string, duration: number) {
+    this.anims.create({
+      key: `mine-${oreType}`,
+      frames: this.anims.generateFrameNumbers(`ore-${oreType}`, {
+        start: 0,
+        end: ANIMATION_CONFIG.ORE_FRAME_COUNT - 1
+      }),
+      duration,
+      repeat: 0
+    });
   }
 
   /**
