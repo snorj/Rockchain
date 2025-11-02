@@ -1,85 +1,189 @@
 import { create } from 'zustand';
-import type { GameState, SellData } from '../types/game.types';
-import type { OreType } from '../utils/constants';
-import { ORE_CONFIG } from '../utils/constants';
+import type { MaterialType } from '../game/config/materials';
+import type { PickaxeTier } from '../game/config/pickaxes';
+import type { LevelId } from '../game/config/levels';
+import { MATERIALS } from '../game/config/materials';
+
+/**
+ * Game inventory - dynamic based on what player has collected
+ */
+export type GameInventory = Partial<Record<MaterialType, number>>;
+
+/**
+ * Main game state interface
+ */
+export interface GameState {
+  // Player stats
+  gold: number;
+  currentPickaxe: PickaxeTier;
+  currentLevel: LevelId;
+  
+  // Level access tracking
+  levelExpiry: number | null;  // Timestamp when current level access expires (null = unlimited)
+  
+  // Inventory (only materials with count > 0)
+  inventory: GameInventory;
+  
+  // Game status
+  isPlaying: boolean;
+  isPaused: boolean;
+  
+  // Actions
+  addMaterial: (material: MaterialType, amount?: number) => void;
+  removeMaterial: (material: MaterialType, amount: number) => void;
+  clearInventory: () => void;
+  
+  setGold: (amount: number) => void;
+  addGold: (amount: number) => void;
+  removeGold: (amount: number) => void;
+  
+  setPickaxe: (pickaxe: PickaxeTier) => void;
+  setLevel: (level: LevelId, expiryTimestamp?: number) => void;
+  
+  pauseGame: () => void;
+  resumeGame: () => void;
+}
 
 /**
  * Zustand store for managing game state
- * This is the single source of truth for inventory, game status, and player actions
  */
 export const useGameStore = create<GameState>((set, get) => ({
-  // Initial inventory state
-  inventory: {
-    coal: 0,
-    iron: 0,
-    diamond: 0
-  },
-  
-  // Initial game state
+  // Initial state
+  gold: 0,
+  currentPickaxe: 'wooden',
+  currentLevel: 1,
+  levelExpiry: null,
+  inventory: {},
   isPlaying: true,
   isPaused: false,
   
   /**
-   * Add ore to inventory when mined
+   * Add material to inventory
    */
-  addOre: (oreType: OreType) => {
+  addMaterial: (material: MaterialType, amount: number = 1) => {
     set((state) => ({
       inventory: {
         ...state.inventory,
-        [oreType]: state.inventory[oreType] + 1
+        [material]: (state.inventory[material] || 0) + amount
       }
     }));
+    console.log(`📦 Added ${amount}x ${material} to inventory`);
   },
   
   /**
-   * Reset inventory (called after successful sell)
+   * Remove material from inventory
    */
-  resetInventory: () => {
-    set({ inventory: { coal: 0, iron: 0, diamond: 0 } });
+  removeMaterial: (material: MaterialType, amount: number) => {
+    set((state) => {
+      const currentAmount = state.inventory[material] || 0;
+      const newAmount = Math.max(0, currentAmount - amount);
+      
+      // Remove from inventory if 0
+      if (newAmount === 0) {
+        const { [material]: _, ...rest } = state.inventory;
+        return { inventory: rest };
+      }
+      
+      return {
+        inventory: {
+          ...state.inventory,
+          [material]: newAmount
+        }
+      };
+    });
   },
   
   /**
-   * Pause the game
+   * Clear entire inventory
+   */
+  clearInventory: () => {
+    set({ inventory: {} });
+    console.log('🗑️  Inventory cleared');
+  },
+  
+  /**
+   * Set gold amount (absolute)
+   */
+  setGold: (amount: number) => {
+    set({ gold: Math.max(0, amount) });
+  },
+  
+  /**
+   * Add gold
+   */
+  addGold: (amount: number) => {
+    set((state) => ({ gold: state.gold + amount }));
+    console.log(`💰 Added ${amount} gold`);
+  },
+  
+  /**
+   * Remove gold
+   */
+  removeGold: (amount: number) => {
+    set((state) => ({ gold: Math.max(0, state.gold - amount) }));
+    console.log(`💸 Spent ${amount} gold`);
+  },
+  
+  /**
+   * Set current pickaxe
+   */
+  setPickaxe: (pickaxe: PickaxeTier) => {
+    set({ currentPickaxe: pickaxe });
+    console.log(`⛏️  Equipped ${pickaxe} pickaxe`);
+  },
+  
+  /**
+   * Set current level
+   */
+  setLevel: (level: LevelId, expiryTimestamp?: number) => {
+    set({ 
+      currentLevel: level,
+      levelExpiry: expiryTimestamp || null
+    });
+    console.log(`🏔️  Entered Level ${level}${expiryTimestamp ? ` (expires at ${new Date(expiryTimestamp).toLocaleTimeString()})` : ''}`);
+  },
+  
+  /**
+   * Pause game
    */
   pauseGame: () => {
     set({ isPaused: true });
   },
   
   /**
-   * Resume the game
+   * Resume game
    */
   resumeGame: () => {
     set({ isPaused: false });
-  },
-  
-  /**
-   * Called when player clicks the sell button
-   * Returns current inventory and calculated total value
-   */
-  onSellRequested: (): SellData => {
-    const { inventory } = get();
-    const totalValue = 
-      inventory.coal * ORE_CONFIG.GLD_VALUES.coal +
-      inventory.iron * ORE_CONFIG.GLD_VALUES.iron +
-      inventory.diamond * ORE_CONFIG.GLD_VALUES.diamond;
-    
-    return {
-      ...inventory,
-      totalValue
-    };
-  },
-  
-  /**
-   * Called by blockchain layer after transaction completes
-   * Resets inventory on success, logs error on failure
-   */
-  onSellComplete: (success: boolean, txHash?: string) => {
-    if (success) {
-      get().resetInventory();
-      console.log('✅ Sell successful! TX:', txHash);
-    } else {
-      console.error('❌ Sell failed');
-    }
   }
 }));
 
+/**
+ * Helper: Get total inventory value in gold
+ */
+export function getInventoryValue(inventory: GameInventory): number {
+  return Object.entries(inventory).reduce((total, [material, count]) => {
+    const value = MATERIALS[material as MaterialType]?.goldValue || 0;
+    return total + (value * (count || 0));
+  }, 0);
+}
+
+/**
+ * Helper: Get inventory as arrays for contract calls
+ */
+export function getInventoryArrays(inventory: GameInventory): {
+  materials: MaterialType[];
+  amounts: number[];
+} {
+  const materials: MaterialType[] = [];
+  const amounts: number[] = [];
+  
+  Object.entries(inventory).forEach(([material, count]) => {
+    if (count && count > 0) {
+      materials.push(material as MaterialType);
+      amounts.push(count);
+    }
+  });
+  
+  return { materials, amounts };
+}

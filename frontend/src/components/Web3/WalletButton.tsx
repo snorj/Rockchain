@@ -29,19 +29,11 @@ export const WalletButton = () => {
     <div className="user-profile">
       <div className="user-info">
         <div className="user-name">
-          <span className="name-icon">👤</span>
           <span className="name-text">{displayName}</span>
-        </div>
-        <div className="user-balance">
-          <span className="balance-icon">💰</span>
-          <span className="balance-amount">
-            {balanceLoading ? '...' : balance.toFixed(2)}
-          </span>
-          <span className="balance-currency">GLD</span>
         </div>
       </div>
       <button className="signout-button" onClick={logout} title="Sign Out">
-        🚪
+        Sign Out
       </button>
     </div>
   );

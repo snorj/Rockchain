@@ -1,0 +1,201 @@
+/* Minecraft-style Minimal Inventory */
+.inventory-panel-minimal {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 8px;
+  backdrop-filter: blur(4px);
+}
+
+.inventory-empty-minimal {
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  font-family: 'Pixelify Sans', monospace;
+  color: #888;
+  opacity: 0.7;
+}
+
+.inventory-grid-minimal {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 56px);
+  gap: 4px;
+  max-width: 240px;
+}
+
+/* Individual Inventory Slot */
+.inventory-slot {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inventory-slot:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.05);
+}
+
+/* Item Icon */
+.slot-icon-container {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slot-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  position: relative;
+  z-index: 1;
+}
+
+.slot-icon-fallback {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 3px;
+  opacity: 0.6;
+  z-index: 0;
+}
+
+/* Quantity Badge */
+.slot-quantity {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  font-family: 'Pixelify Sans', monospace;
+  padding: 2px 4px;
+  border-radius: 3px;
+  min-width: 16px;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  pointer-events: none;
+}
+
+/* Hover Tooltip */
+.slot-tooltip {
+  position: absolute;
+  right: calc(100% + 8px);
+  top: 0;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  padding: 10px;
+  min-width: 180px;
+  z-index: 1000;
+  pointer-events: none;
+  animation: tooltipFadeIn 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.tooltip-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.tooltip-name {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  font-family: 'Pixelify Sans', Arial, sans-serif;
+}
+
+.tooltip-tier {
+  font-size: 11px;
+  font-weight: bold;
+  opacity: 0.9;
+}
+
+.tooltip-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltip-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.tooltip-label {
+  color: #aaa;
+}
+
+.tooltip-value {
+  color: #fff;
+  font-weight: bold;
+}
+
+.tooltip-total {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 13px;
+  color: #4CAF50;
+  text-align: center;
+}
+
+.tooltip-total strong {
+  color: #ffd700;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .inventory-grid-minimal {
+    grid-template-columns: repeat(auto-fill, 48px);
+    max-width: 200px;
+  }
+  
+  .inventory-slot {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .slot-icon-container {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .slot-quantity {
+    font-size: 10px;
+  }
+  
+  .slot-tooltip {
+    min-width: 160px;
+  }
+}

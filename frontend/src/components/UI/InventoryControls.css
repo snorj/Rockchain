@@ -1,0 +1,56 @@
+.inventory-controls {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.inventory-control-button {
+  flex: 1;
+  padding: 10px 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: 'Pixelify Sans', monospace;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.inventory-control-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.inventory-control-button:active {
+  transform: translateY(0);
+}
+
+.materials-button {
+  background: linear-gradient(135deg, #3498db 0%, #2c7bb6 100%);
+}
+
+.materials-button:hover {
+  background: linear-gradient(135deg, #4aa3e0 0%, #3498db 100%);
+}
+
+.shop-button {
+  background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+}
+
+.shop-button:hover {
+  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .inventory-control-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+

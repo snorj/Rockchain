@@ -1,15 +1,49 @@
-import type { OreType } from '../utils/constants';
+import type { OreType, GemType, PickaxeTier } from '../utils/constants';
+
+/**
+ * Expanded inventory for all 17 ore types
+ */
+export interface GameInventory {
+  // Common ores
+  stone: number;
+  coal: number;
+  copper: number;
+  tin: number;
+  
+  // Uncommon ores
+  iron: number;
+  lead: number;
+  silver: number;
+  
+  // Rare ores
+  gold: number;
+  titanium: number;
+  cobalt: number;
+  tungsten: number;
+  
+  // Epic ores
+  mythril: number;
+  orichalcum: number;
+  platinum: number;
+  
+  // Legendary ores
+  adamantite: number;
+  palladium: number;
+  meteorite: number;
+}
 
 /**
  * Main game state interface
  */
 export interface GameState {
-  // Inventory tracking
-  inventory: {
-    coal: number;
-    iron: number;
-    diamond: number;
-  };
+  // Expanded inventory tracking
+  inventory: GameInventory;
+  
+  // Pickaxe state
+  pickaxeTier: PickaxeTier;
+  
+  // Gem collection
+  gems: GemType[];
   
   // Game status
   isPlaying: boolean;
@@ -17,11 +51,13 @@ export interface GameState {
   
   // Actions (for game logic)
   addOre: (oreType: OreType) => void;
+  addGem: (gemType: GemType) => void;
+  setPickaxeTier: (tier: PickaxeTier) => void;
   resetInventory: () => void;
   pauseGame: () => void;
   resumeGame: () => void;
   
-  // Interface for blockchain layer (called by blockchain PRD)
+  // Interface for blockchain layer
   onSellRequested: () => SellData;
   onSellComplete: (success: boolean, txHash?: string) => void;
 }
@@ -30,9 +66,8 @@ export interface GameState {
  * Data structure returned when player requests to sell resources
  */
 export interface SellData {
-  coal: number;
-  iron: number;
-  diamond: number;
+  oreIds: number[];
+  amounts: number[];
   totalValue: number;
 }
 
@@ -42,10 +77,11 @@ export interface SellData {
 export interface OreMined {
   oreType: OreType;
   value: number;
+  ore?: any; // Reference to the ore node
 }
 
 /**
- * Leaderboard entry structure (for mock/future blockchain integration)
+ * Leaderboard entry structure
  */
 export interface LeaderboardEntry {
   address: string;
@@ -58,3 +94,19 @@ export interface LeaderboardData {
   currentPlayer?: LeaderboardEntry;
 }
 
+/**
+ * Blockchain types
+ */
+export interface PickaxeData {
+  tokenId: bigint;
+  tier: PickaxeTier;
+  durability: bigint;
+  maxDurability: bigint;
+}
+
+export interface GemData {
+  tokenId: bigint;
+  gemType: GemType;
+  oreSource: string;
+  mintedAt: bigint;
+}

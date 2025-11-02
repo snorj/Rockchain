@@ -1,0 +1,11 @@
+{
+  "goldToken": "0xBc0E7e2E4FAf207993adF7f6A7c5E4606719f527",
+  "pickaxeNFT": "0xDb2030F78d940F0057d2f6B877957BF68213D0D9",
+  "gemNFT": "0x25FaD2bA87BdCD9E41fCa42b45c7a573506bFb73",
+  "game": "0x1916045204B3c9AA236c8f13918CdAbe1Ee61623",
+  "chainId": 11155111,
+  "network": "sepolia",
+  "phase": "1-2",
+  "deployedAt": "2025-11-02T07:59:28.517Z",
+  "deployer": "0x130ab29176Da05064F1Ef0664cEC7112c717e6a9"
+}

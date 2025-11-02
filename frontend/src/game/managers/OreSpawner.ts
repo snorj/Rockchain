@@ -1,170 +1,203 @@
 import Phaser from 'phaser';
 import { OreNode } from '../entities/OreNode';
-import type { OreType } from '../../utils/constants';
-import { ORE_CONFIG } from '../../utils/constants';
+import type { LevelId } from '../config/levels';
+import { selectRandomMaterial } from '../config/levels';
+import type { PickaxeTier } from '../config/pickaxes';
+import { PICKAXES } from '../config/pickaxes';
+import { getMaterialRockSprite } from '../config/materials';
 
 /**
- * OreSpawner manages spawning and tracking of ore nodes
- * Handles initial spawning, rarity distribution, and respawning
+ * OreSpawner manages ore node spawning and tracking
+ * Keeps 10 ore nodes on screen at all times
  */
 export class OreSpawner {
   private scene: Phaser.Scene;
-  private activeOres: OreNode[] = [];
-  private spawnedPositions: { x: number; y: number }[] = [];
-
+  private oreNodes: OreNode[] = [];
+  private currentLevel: LevelId = 1;
+  private currentPickaxe: PickaxeTier = 'wooden';
+  
+  // Spawn area configuration
+  private readonly SPAWN_AREA = {
+    x: 50,
+    y: 80,
+    width: 700,
+    height: 440
+  };
+  
+  private readonly TARGET_ORE_COUNT = 10;
+  private readonly MIN_SPACING = 80; // Minimum distance between ores
+  
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
   }
-
+  
   /**
-   * Spawns initial batch of ores when game starts
+   * Set current level (changes spawn table)
    */
-  spawnInitialOres() {
-    const count = Phaser.Math.Between(
-      ORE_CONFIG.SPAWN_COUNT.min,
-      ORE_CONFIG.SPAWN_COUNT.max
-    );
-    
-    console.log(`🎲 Spawning ${count} initial ores...`);
-    
-    for (let i = 0; i < count; i++) {
-      this.spawnRandomOre();
-    }
+  public setLevel(level: LevelId) {
+    this.currentLevel = level;
+    console.log(`🏔️  OreSpawner: Set level to ${level}`);
   }
-
+  
   /**
-   * Spawns a single ore at a random location with weighted rarity
-   * @returns The spawned OreNode
+   * Set current pickaxe (affects mining speed)
    */
-  spawnRandomOre(): OreNode {
-    const oreType = this.selectRandomOreType();
-    const position = this.getRandomPosition();
+  public setPickaxe(pickaxe: PickaxeTier) {
+    this.currentPickaxe = pickaxe;
+    console.log(`⛏️  OreSpawner: Set pickaxe to ${pickaxe}`);
+  }
+  
+  /**
+   * Spawn initial ores to fill the screen
+   */
+  public spawnInitialOres() {
+    // Clear existing ores
+    this.clearAllOres();
     
-    const ore = new OreNode(
+    // Spawn TARGET_ORE_COUNT ores
+    for (let i = 0; i < this.TARGET_ORE_COUNT; i++) {
+      this.spawnOre();
+    }
+    
+    console.log(`⚒️  Spawned ${this.TARGET_ORE_COUNT} initial ores`);
+  }
+  
+  /**
+   * Spawn a single ore at a random valid position
+   */
+  public spawnOre(): OreNode | null {
+    // Select material based on current level's spawn table
+    const material = selectRandomMaterial(this.currentLevel);
+    
+    // Find valid spawn position
+    const position = this.findValidSpawnPosition();
+    if (!position) {
+      console.warn('⚠️  Could not find valid spawn position');
+      return null;
+    }
+    
+    // Get sprite for this material (random tile 05-08)
+    const spriteKey = this.loadMaterialSprite(material);
+    
+    // Create ore node (pickaxe speed is applied when mining starts)
+    const oreNode = new OreNode(
       this.scene,
       position.x,
       position.y,
-      oreType
+      material,
+      spriteKey
     );
     
-    this.activeOres.push(ore);
-    this.spawnedPositions.push(position);
+    // Add to tracking
+    this.oreNodes.push(oreNode);
     
-    console.log(`⛏️  Spawned ${oreType} at (${position.x}, ${position.y})`);
-    
-    return ore;
+    return oreNode;
   }
-
+  
   /**
-   * Selects a random ore type based on rarity weights
-   * Uses weighted random selection (70% coal, 25% iron, 5% diamond)
-   * @returns Selected ore type
+   * Find a valid random position that doesn't overlap with existing ores
    */
-  private selectRandomOreType(): OreType {
-    const rand = Math.random();
-    const weights = ORE_CONFIG.RARITY_WEIGHTS;
-    
-    // Calculate cumulative weights
-    // Diamond: 0 - 0.05
-    // Iron: 0.05 - 0.30
-    // Coal: 0.30 - 1.0
-    
-    if (rand < weights.diamond) {
-      return 'diamond';
-    } else if (rand < weights.diamond + weights.iron) {
-      return 'iron';
-    } else {
-      return 'coal';
-    }
-  }
-
-  /**
-   * Gets a random position within the spawn area
-   * Attempts to avoid overlapping with existing ores
-   * @returns Random position {x, y}
-   */
-  private getRandomPosition(): { x: number; y: number } {
-    const { x, y, width, height } = ORE_CONFIG.SPAWN_AREA;
-    const minDistance = 80; // Minimum distance between ores
-    const maxAttempts = 20;
-    
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      const newPos = {
-        x: Phaser.Math.Between(x, x + width),
-        y: Phaser.Math.Between(y, y + height)
-      };
+  private findValidSpawnPosition(maxAttempts: number = 50): { x: number; y: number } | null {
+    for (let i = 0; i < maxAttempts; i++) {
+      const x = this.SPAWN_AREA.x + Math.random() * this.SPAWN_AREA.width;
+      const y = this.SPAWN_AREA.y + Math.random() * this.SPAWN_AREA.height;
       
-      // Check if position is far enough from existing ores
-      const isFarEnough = this.spawnedPositions.every(pos => {
-        const distance = Phaser.Math.Distance.Between(
-          newPos.x, newPos.y,
-          pos.x, pos.y
-        );
-        return distance >= minDistance;
-      });
-      
-      if (isFarEnough) {
-        return newPos;
+      // Check if position is valid (not too close to other ores)
+      if (this.isPositionValid(x, y)) {
+        return { x, y };
       }
     }
     
-    // If we couldn't find a good position, return a random one anyway
+    // If we couldn't find a valid position, return a random one anyway
     return {
-      x: Phaser.Math.Between(x, x + width),
-      y: Phaser.Math.Between(y, y + height)
+      x: this.SPAWN_AREA.x + Math.random() * this.SPAWN_AREA.width,
+      y: this.SPAWN_AREA.y + Math.random() * this.SPAWN_AREA.height
     };
   }
-
+  
   /**
-   * Removes an ore from tracking when it's mined
-   * @param ore - The ore to remove
+   * Check if position is valid (not too close to existing ores)
    */
-  removeOre(ore: OreNode) {
-    const index = this.activeOres.indexOf(ore);
-    if (index > -1) {
-      this.activeOres.splice(index, 1);
-      
-      // Also remove from spawned positions (find closest position)
-      if (this.spawnedPositions.length > 0) {
-        const orePos = { x: ore.x, y: ore.y };
-        let closestIndex = 0;
-        let closestDist = Phaser.Math.Distance.Between(
-          orePos.x, orePos.y,
-          this.spawnedPositions[0].x, this.spawnedPositions[0].y
-        );
-        
-        for (let i = 1; i < this.spawnedPositions.length; i++) {
-          const dist = Phaser.Math.Distance.Between(
-            orePos.x, orePos.y,
-            this.spawnedPositions[i].x, this.spawnedPositions[i].y
-          );
-          if (dist < closestDist) {
-            closestDist = dist;
-            closestIndex = i;
-          }
-        }
-        
-        this.spawnedPositions.splice(closestIndex, 1);
+  private isPositionValid(x: number, y: number): boolean {
+    for (const ore of this.oreNodes) {
+      const distance = Phaser.Math.Distance.Between(x, y, ore.x, ore.y);
+      if (distance < this.MIN_SPACING) {
+        return false;
       }
     }
+    return true;
+  }
+  
+  /**
+   * Get random rock sprite key for a material
+   * Returns one of tiles 05-08 randomly, or specific stone tiles
+   */
+  private loadMaterialSprite(material: string): string {
+    // Stone uses specific tiles: 10, 11, 12, 13, 15, 16, 17, 18 (excluding 14)
+    if (material === 'stone') {
+      const stoneTiles = [10, 11, 12, 13, 15, 16, 17, 18];
+      const randomIndex = Math.floor(Math.random() * stoneTiles.length);
+      return `stone-rock-${stoneTiles[randomIndex]}`;
+    }
     
-    ore.destroy();
+    // Other materials use tiles 05-08
+    const tileNum = 5 + Math.floor(Math.random() * 4); // 5, 6, 7, or 8
+    return `${material}-rock-${tileNum}`;
   }
-
+  
   /**
-   * Gets count of currently active ores
+   * Remove an ore node from tracking
    */
-  getActiveOreCount(): number {
-    return this.activeOres.length;
+  public removeOre(ore: OreNode) {
+    const index = this.oreNodes.indexOf(ore);
+    if (index > -1) {
+      this.oreNodes.splice(index, 1);
+    }
   }
-
+  
   /**
-   * Cleans up all ores
+   * Get ore at specific position (for click detection)
    */
-  destroy() {
-    this.activeOres.forEach(ore => ore.destroy());
-    this.activeOres = [];
-    this.spawnedPositions = [];
+  public getOreAt(x: number, y: number): OreNode | null {
+    for (const ore of this.oreNodes) {
+      const sprite = ore.getSprite();
+      const bounds = sprite.getBounds();
+      
+      if (bounds.contains(x, y)) {
+        return ore;
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * Maintain target ore count (spawn new ore if needed)
+   */
+  public maintainOreCount() {
+    while (this.oreNodes.length < this.TARGET_ORE_COUNT) {
+      this.spawnOre();
+    }
+  }
+  
+  /**
+   * Clear all ores from screen
+   */
+  public clearAllOres() {
+    this.oreNodes.forEach(ore => ore.destroy());
+    this.oreNodes = [];
+  }
+  
+  /**
+   * Get current ore count
+   */
+  public getOreCount(): number {
+    return this.oreNodes.length;
+  }
+  
+  /**
+   * Cleanup
+   */
+  public destroy() {
+    this.clearAllOres();
   }
 }
-

@@ -12,22 +12,19 @@ export const LoginScreen = () => {
     <div className="login-screen">
       <div className="login-container">
         <div className="login-header">
-          <h1 className="login-title">⛏️ ROCKCHAIN</h1>
+          <h1 className="login-title">ROCKCHAIN</h1>
           <p className="login-subtitle">Mine resources. Earn rewards. Play to earn.</p>
         </div>
 
         <div className="login-content">
           <div className="feature-list">
             <div className="feature-item">
-              <span className="feature-icon">⛏️</span>
               <span className="feature-text">Mine Coal, Iron & Diamond</span>
             </div>
             <div className="feature-item">
-              <span className="feature-icon">💰</span>
               <span className="feature-text">Earn GLD tokens on blockchain</span>
             </div>
             <div className="feature-item">
-              <span className="feature-icon">🎮</span>
               <span className="feature-text">Play for free, no wallet needed</span>
             </div>
           </div>
@@ -38,10 +35,7 @@ export const LoginScreen = () => {
             disabled={!ready}
           >
             {ready ? (
-              <>
-                <span className="button-icon">▶️</span>
-                <span className="button-text">Start Playing</span>
-              </>
+              <span className="button-text">Start Playing</span>
             ) : (
               'Loading...'
             )}
@@ -59,10 +53,6 @@ export const LoginScreen = () => {
 
       {/* Animated background */}
       <div className="login-background">
-        <div className="bg-ore bg-ore-1">⛏️</div>
-        <div className="bg-ore bg-ore-2">💎</div>
-        <div className="bg-ore bg-ore-3">⛏️</div>
-        <div className="bg-ore bg-ore-4">💰</div>
       </div>
     </div>
   );

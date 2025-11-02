@@ -1,0 +1,264 @@
+.level-selector {
+  position: relative;
+  min-width: 300px;
+}
+
+.level-current {
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.level-current:hover {
+  background: rgba(0, 0, 0, 0.95);
+  border-color: #666;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.level-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.level-name {
+  font-weight: bold;
+  color: #fff;
+  font-size: 16px;
+}
+
+.level-tier {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.level-timer {
+  background: rgba(76, 175, 80, 0.2);
+  border: 1px solid #4CAF50;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #4CAF50;
+  font-family: 'Pixelify Sans', 'Courier New', monospace;
+}
+
+.level-timer.warning {
+  background: rgba(255, 152, 0, 0.2);
+  border-color: #FF9800;
+  color: #FF9800;
+  animation: pulse 1s infinite;
+}
+
+.level-timer.unlimited {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: #2196F3;
+  color: #2196F3;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.expand-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid #555;
+  border-radius: 4px;
+  padding: 4px 8px;
+  color: #aaa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+}
+
+.expand-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.level-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid #444;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom scrollbar */
+.level-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.level-dropdown::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.level-dropdown::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 3px;
+}
+
+.level-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}
+
+.level-option {
+  position: relative;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #555;
+  border-left: 4px solid #888;
+  border-radius: 6px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.level-option:hover:not(.current):not(.locked) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #777;
+  transform: translateX(4px);
+}
+
+.level-option.current {
+  background: rgba(76, 175, 80, 0.2);
+  border-color: #4CAF50;
+  cursor: default;
+}
+
+.level-option.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.level-option-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.level-option-name {
+  font-weight: bold;
+  color: #fff;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.current-badge {
+  background: #4CAF50;
+  color: #fff;
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.level-number {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #aaa;
+  font-weight: bold;
+}
+
+.level-option-desc {
+  font-size: 12px;
+  color: #aaa;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.level-option-requirements {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.requirement {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.req-icon {
+  font-size: 12px;
+}
+
+.req-met {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.req-unmet {
+  color: #FF5252;
+  font-weight: bold;
+}
+
+.locked-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 6px;
+  color: #888;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.lock-icon {
+  font-size: 24px;
+}
+
