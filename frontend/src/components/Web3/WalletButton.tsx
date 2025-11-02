@@ -3,10 +3,11 @@ import { useGoldBalance } from '../../blockchain/hooks/useGoldBalance';
 import './WalletButton.css';
 
 /**
- * Wallet connection button with balance display
+ * User profile button - shows GLD balance and sign out option
+ * Only visible after authentication
  */
 export const WalletButton = () => {
-  const { ready, authenticated, login, logout } = usePrivy();
+  const { ready, authenticated, user, logout } = usePrivy();
   const { wallets } = useWallets();
 
   const embeddedWallet = wallets.find((w) => w.walletClientType === 'privy');
@@ -14,40 +15,33 @@ export const WalletButton = () => {
     embeddedWallet?.address
   );
 
-  if (!ready) {
-    return (
-      <button className="wallet-button" disabled>
-        Loading...
-      </button>
-    );
+  if (!ready || !authenticated) {
+    return null; // Don't show anything if not authenticated
   }
 
-  if (!authenticated) {
-    return (
-      <button className="wallet-button connect" onClick={login}>
-        🔗 Connect Wallet
-      </button>
-    );
-  }
+  // Get user's display name (email or social username)
+  const displayName = user?.email?.address || 
+                      user?.google?.email || 
+                      user?.twitter?.username ||
+                      'Player';
 
   return (
-    <div className="wallet-info">
-      <div className="wallet-address">
-        <span className="label">Wallet:</span>
-        <span className="address">
-          {embeddedWallet?.address
-            ? `${embeddedWallet.address.slice(0, 6)}...${embeddedWallet.address.slice(-4)}`
-            : 'Unknown'}
-        </span>
+    <div className="user-profile">
+      <div className="user-info">
+        <div className="user-name">
+          <span className="name-icon">👤</span>
+          <span className="name-text">{displayName}</span>
+        </div>
+        <div className="user-balance">
+          <span className="balance-icon">💰</span>
+          <span className="balance-amount">
+            {balanceLoading ? '...' : balance.toFixed(2)}
+          </span>
+          <span className="balance-currency">GLD</span>
+        </div>
       </div>
-      <div className="wallet-balance">
-        <span className="label">💰 GLD:</span>
-        <span className="balance">
-          {balanceLoading ? '...' : balance.toFixed(2)}
-        </span>
-      </div>
-      <button className="wallet-button disconnect" onClick={logout}>
-        Disconnect
+      <button className="signout-button" onClick={logout} title="Sign Out">
+        🚪
       </button>
     </div>
   );

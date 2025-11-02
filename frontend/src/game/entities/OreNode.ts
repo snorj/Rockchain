@@ -25,7 +25,7 @@ export class OreNode extends Phaser.GameObjects.Sprite {
     this.oreType = oreType;
     
     // Set scale for better visibility
-    this.setScale(2);
+    this.setScale(3.5);
     
     // Make interactive with hand cursor
     this.setInteractive({ useHandCursor: true });
@@ -114,10 +114,10 @@ export class OreNode extends Phaser.GameObjects.Sprite {
     
     this.progressBar.clear();
     
-    const barWidth = 48;
-    const barHeight = 6;
+    const barWidth = 64;
+    const barHeight = 8;
     const x = this.x - barWidth / 2;
-    const y = this.y - 35;
+    const y = this.y - 50;
     
     // Background (dark)
     this.progressBar.fillStyle(0x000000, 0.7);

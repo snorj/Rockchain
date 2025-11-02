@@ -22,9 +22,6 @@ export class MiningScene extends Phaser.Scene {
     // Add tiled background
     this.createBackground();
     
-    // Add decorative torches
-    this.createTorches();
-    
     // Add title text
     this.createTitleText();
     
@@ -37,74 +34,29 @@ export class MiningScene extends Phaser.Scene {
   }
 
   /**
-   * Creates the cave background using tiled sprites
+   * Creates the cave background using stone texture
    */
   private createBackground() {
-    // Cave wall background
+    // Stone texture background
     this.background = this.add.tileSprite(
       400, 300,
       800, 600,
-      'wall-cave'
+      'stone-background'
     );
-    this.background.setAlpha(0.8);
+    this.background.setAlpha(0.95);
     
-    // Add ground overlay
-    const ground = this.add.tileSprite(
-      400, 300,
-      800, 600,
-      'ground'
-    );
-    ground.setAlpha(0.3);
-    
-    // Subtle background animation
+    // Subtle background animation for depth
     this.tweens.add({
       targets: this.background,
-      tilePositionX: 10,
-      duration: 20000,
+      tilePositionX: 5,
+      tilePositionY: 5,
+      duration: 30000,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.easeInOut'
     });
   }
 
-  /**
-   * Creates decorative animated torches
-   */
-  private createTorches() {
-    // Left torches
-    const torch1 = this.add.sprite(60, 80, 'torch-1');
-    torch1.setScale(2);
-    torch1.play('torch-flicker');
-    
-    const torch2 = this.add.sprite(60, 520, 'torch-1');
-    torch2.setScale(2);
-    torch2.play('torch-flicker');
-    
-    // Right torches
-    const torch3 = this.add.sprite(740, 80, 'torch-1');
-    torch3.setScale(2);
-    torch3.play('torch-flicker');
-    
-    const torch4 = this.add.sprite(740, 520, 'torch-1');
-    torch4.setScale(2);
-    torch4.play('torch-flicker');
-    
-    // Add glow effect to torches
-    [torch1, torch2, torch3, torch4].forEach(torch => {
-      const glow = this.add.circle(torch.x, torch.y + 5, 30, 0xff6600, 0.1);
-      
-      // Pulsing glow
-      this.tweens.add({
-        targets: glow,
-        alpha: 0.2,
-        scale: 1.2,
-        duration: 1000,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.easeInOut'
-      });
-    });
-  }
 
   /**
    * Creates title text

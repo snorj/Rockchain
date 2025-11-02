@@ -42,6 +42,9 @@ export class PreloadScene extends Phaser.Scene {
     this.load.image('inventory-coal', '/assets/sprites/ores/coal/coal04.png');
     this.load.image('inventory-iron', '/assets/sprites/ores/iron/iron09.png');
     this.load.image('inventory-diamond', '/assets/sprites/ores/diamond/diamond09.png');
+    
+    // Load background texture
+    this.load.image('stone-background', '/assets/tilesets/stone-background.png');
   }
 
   create() {

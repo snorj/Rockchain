@@ -6,13 +6,17 @@ export const privyConfig: PrivyClientConfig = {
   appearance: {
     theme: 'dark',
     accentColor: '#FFD700',
+    logo: 'https://em-content.zobj.net/thumbs/120/apple/354/pick_26cf-fe0f.png',
   },
   embeddedWallets: {
     ethereum: {
       createOnLogin: 'users-without-wallets',
     },
-    showWalletUIs: true,
+    // Hide wallet UI - users don't need to see crypto details
+    showWalletUIs: false,
   },
   defaultChain: sepolia,
+  // Support for multiple chains (future-proofing)
+  supportedChains: [sepolia],
 };
 
