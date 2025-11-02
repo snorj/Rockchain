@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useGameStore, getInventoryValue } from '../../store/gameStore';
 import { useSellResourcesV2, calculateTotalValue } from '../../blockchain/hooks/useSellResourcesV2';
+import { usePickaxe } from '../../blockchain/hooks/usePickaxe';
 import { PICKAXES, getNextPickaxe } from '../../game/config/pickaxes';
 import type { PickaxeTier } from '../../game/config/pickaxes';
 import { MATERIALS } from '../../game/config/materials';
@@ -33,6 +34,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   const inventory = useGameStore(state => state.inventory);
   
   const { sellResources, isLoading: isSelling } = useSellResourcesV2();
+  const { buyPickaxe, isBuying } = usePickaxe(embeddedWallet?.address);
   
   const [activeTab, setActiveTab] = useState<ShopTab>('sell');
   
@@ -41,9 +43,24 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   const inventoryValue = getInventoryValue(inventory);
   const hasInventory = Object.values(inventory).some(count => count && count > 0);
   
+  /**
+   * Convert game pickaxe tier to blockchain tier number
+   * Game: 1-5 (wooden, iron, steel, mythril, adamantite)
+   * Blockchain: 0-4 (Wooden, Iron, Steel, Mythril, Adamantite)
+   */
+  const getBlockchainTier = (pickaxeTier: PickaxeTier): 0 | 1 | 2 | 3 | 4 => {
+    const config = PICKAXES[pickaxeTier];
+    return (config.tier - 1) as 0 | 1 | 2 | 3 | 4;
+  };
+  
   const handlePurchasePickaxe = async (pickaxe: PickaxeTier) => {
     if (!authenticated) {
       alert('Please sign in first!');
+      return;
+    }
+    
+    if (!embeddedWallet?.address) {
+      alert('Wallet not found!');
       return;
     }
     
@@ -56,14 +73,22 @@ export const ShopModal: React.FC<ShopModalProps> = ({
     
     if (window.confirm(`Purchase ${pickaxeConfig.name} for ${pickaxeConfig.price}g?`)) {
       try {
-        // TODO: Call PickaxeNFT.buyPickaxe(tier) via usePickaxe hook
-        // For now, just update local state
+        console.log(`🔨 Purchasing ${pickaxeConfig.name} (tier ${pickaxeConfig.tier})...`);
+        
+        // Call blockchain to buy pickaxe
+        const blockchainTier = getBlockchainTier(pickaxe);
+        await buyPickaxe(blockchainTier);
+        
+        console.log(`✅ Successfully purchased ${pickaxeConfig.name} on blockchain`);
+        
+        // Update local game state
         onPickaxePurchased(pickaxe);
         useGameStore.getState().removeGold(pickaxeConfig.price);
+        
         alert(`Successfully purchased ${pickaxeConfig.name}!`);
         onClose();
       } catch (error: any) {
-        console.error('Failed to purchase pickaxe:', error);
+        console.error('❌ Failed to purchase pickaxe:', error);
         alert(`Failed to purchase pickaxe: ${error.message || 'Unknown error'}`);
       }
     }
@@ -228,9 +253,11 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                       <button
                         className="btn-primary btn-large"
                         onClick={() => handlePurchasePickaxe(nextPickaxe.id)}
-                        disabled={gold < nextPickaxe.price}
+                        disabled={gold < nextPickaxe.price || isBuying}
                       >
-                        {gold >= nextPickaxe.price ? (
+                        {isBuying ? (
+                          <>Purchasing...</>
+                        ) : gold >= nextPickaxe.price ? (
                           <>Purchase for {nextPickaxe.price}g</>
                         ) : (
                           <>Not Enough Gold ({gold}/{nextPickaxe.price}g)</>

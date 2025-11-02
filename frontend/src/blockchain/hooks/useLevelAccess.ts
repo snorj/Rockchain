@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth';
-import { createPublicClient, http, encodeFunctionData } from 'viem';
+import { createPublicClient, http, encodeFunctionData, parseEther } from 'viem';
 import { sepolia } from 'viem/chains';
-import { GAME_V2_ABI, GAME_V2_ADDRESS } from '../config/contracts';
+import { 
+  GAME_V2_ABI, 
+  GAME_V2_ADDRESS,
+  GOLD_TOKEN_ABI,
+  GOLD_TOKEN_ADDRESS 
+} from '../config/contracts';
 import type { LevelId } from '../../game/config/levels';
 import { LEVELS } from '../../game/config/levels';
 
@@ -130,37 +135,82 @@ export const useLevelAccess = (address?: string) => {
     
     try {
       const levelConfig = LEVELS[level];
-      console.log(`🏔️ Purchasing access to Level ${level} (${levelConfig.name})...`);
-      console.log(`💰 Cost: ${levelConfig.accessCost} GLD`);
-      console.log(`⏰ Duration: ${levelConfig.duration / 60} minutes`);
+      const cost = levelConfig.accessCost;
+      const costWei = parseEther(cost.toString());
+      const durationMinutes = Math.floor(levelConfig.accessDuration / 60);
       
-      // Encode the contract call
-      const data = encodeFunctionData({
+      console.log(`🏔️ Purchasing access to Level ${level} (${levelConfig.name})...`);
+      console.log(`💰 Cost: ${cost} GLD`);
+      console.log(`⏰ Duration: ${durationMinutes} minutes`);
+      
+      // Step 1: Approve GLD spending
+      console.log(`💰 Approving ${cost} GLD for level access...`);
+      
+      const approveData = encodeFunctionData({
+        abi: GOLD_TOKEN_ABI,
+        functionName: 'approve',
+        args: [GAME_V2_ADDRESS, costWei],
+      });
+      
+      let approveReceipt;
+      try {
+        approveReceipt = await sendTransaction(
+          {
+            to: GOLD_TOKEN_ADDRESS,
+            data: approveData,
+            value: 0,
+          },
+          {
+            sponsor: true,
+            header: 'Step 1: Approve GLD',
+            description: `Approve ${cost} GLD tokens for level access purchase`,
+            buttonText: 'Approve Tokens'
+          }
+        );
+        
+        console.log('✅ GLD approved:', approveReceipt.hash);
+      } catch (approveError: any) {
+        console.error('❌ Approval failed:', approveError);
+        throw new Error('Token approval cancelled or failed. Please try again.');
+      }
+      
+      // Wait a moment for approval to propagate
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Step 2: Purchase level access
+      console.log(`🔓 Purchasing level access...`);
+      
+      const purchaseData = encodeFunctionData({
         abi: GAME_V2_ABI,
         functionName: 'purchaseLevelAccess',
         args: [level - 1], // Contract uses 0-indexed levels
       });
       
-      // Send transaction with gas sponsorship
-      const txReceipt = await sendTransaction(
-        {
-          to: GAME_V2_ADDRESS,
-          data: data,
-          value: 0,
-        },
-        {
-          sponsor: true,
-          header: `Unlock ${levelConfig.name}`,
-          description: `Get ${levelConfig.duration / 60} minutes of access for ${levelConfig.accessCost} GLD`,
-          buttonText: 'Purchase Access',
-        }
-      );
-      
-      console.log('✅ Level access purchased:', txReceipt);
-      console.log(`🔗 View on Etherscan: https://sepolia.etherscan.io/tx/${txReceipt.hash}`);
+      let txReceipt;
+      try {
+        txReceipt = await sendTransaction(
+          {
+            to: GAME_V2_ADDRESS,
+            data: purchaseData,
+            value: 0,
+          },
+          {
+            sponsor: true,
+            header: `Step 2: Unlock ${levelConfig.name}`,
+            description: `Purchase ${durationMinutes} minute${durationMinutes > 1 ? 's' : ''} of mining access`,
+            buttonText: 'Confirm Purchase',
+          }
+        );
+        
+        console.log('✅ Level access purchased:', txReceipt.hash);
+        console.log(`🔗 View on Etherscan: https://sepolia.etherscan.io/tx/${txReceipt.hash}`);
+      } catch (purchaseError: any) {
+        console.error('❌ Purchase failed:', purchaseError);
+        throw new Error('Level purchase cancelled or failed. Your approval is still valid for future attempts.');
+      }
       
       // Calculate expiry time
-      const expiryTime = Date.now() + (levelConfig.duration * 1000);
+      const expiryTime = Date.now() + (levelConfig.accessDuration * 1000);
       
       // Refresh level access
       await fetchLevelAccess();

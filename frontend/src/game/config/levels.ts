@@ -46,9 +46,9 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
 
   2: {
     id: 2,
-    name: 'Iron Mine',
+    name: 'Stone Mine',
     description: 'Deeper tunnels rich with common metals.',
-    requiredPickaxe: 'steel',
+    requiredPickaxe: 'stone',
     accessCost: 50,
     accessDuration: 120,  // 2 minutes
     backgroundColor: '#1a1a1a',
@@ -67,7 +67,7 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     id: 3,
     name: 'Precious Mine',
     description: 'Ancient veins of valuable metals and the first gems.',
-    requiredPickaxe: 'iron',
+    requiredPickaxe: 'steel',
     accessCost: 200,
     accessDuration: 120,
     backgroundColor: '#1a1526',
@@ -142,10 +142,12 @@ export function getAllLevels(): LevelConfig[] {
 
 /**
  * Check if player has required pickaxe for level
+ * Order matches smart contract: Wooden, Iron, Steel, Mythril, Adamantite
+ * Note: "stone" in game = "Iron" tier in contract
  */
 export function canAccessLevel(levelId: LevelId, currentPickaxe: PickaxeTier): boolean {
   const level = LEVELS[levelId];
-  const pickaxeTiers: PickaxeTier[] = ['wooden', 'steel', 'iron', 'mythril', 'adamantite'];
+  const pickaxeTiers: PickaxeTier[] = ['wooden', 'stone', 'steel', 'mythril', 'adamantite'];
   const requiredIndex = pickaxeTiers.indexOf(level.requiredPickaxe);
   const currentIndex = pickaxeTiers.indexOf(currentPickaxe);
   

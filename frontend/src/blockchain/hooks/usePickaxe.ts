@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { createPublicClient, createWalletClient, custom, http, parseEther } from 'viem';
+import { createPublicClient, http, parseEther, encodeFunctionData } from 'viem';
 import { sepolia } from 'viem/chains';
+import { useSendTransaction } from '@privy-io/react-auth';
 import { 
   PICKAXE_NFT_ABI, 
   PICKAXE_NFT_ADDRESS, 
@@ -28,6 +29,8 @@ export const usePickaxe = (address?: string) => {
   const [isMinting, setIsMinting] = useState(false);
   const [isBuying, setIsBuying] = useState(false);
   const [isRepairing, setIsRepairing] = useState(false);
+
+  const { sendTransaction } = useSendTransaction();
 
   const publicClient = createPublicClient({
     chain: sepolia,
@@ -95,33 +98,41 @@ export const usePickaxe = (address?: string) => {
    * Mint starter pickaxe (free, Wooden tier)
    */
   const mintStarter = async () => {
-    if (!address || !window.ethereum) {
+    if (!address) {
       throw new Error('Wallet not connected');
     }
 
     setIsMinting(true);
     try {
-      const walletClient = createWalletClient({
-        chain: sepolia,
-        transport: custom(window.ethereum),
-      });
-
-      const hash = await walletClient.writeContract({
-        address: PICKAXE_NFT_ADDRESS,
+      console.log('🔨 Minting free starter pickaxe...');
+      
+      const mintData = encodeFunctionData({
         abi: PICKAXE_NFT_ABI,
         functionName: 'mintStarter',
-        account: address as `0x${string}`,
+        args: [],
       });
 
-      console.log('✅ Minting starter pickaxe, tx hash:', hash);
+      const receipt = await sendTransaction(
+        {
+          to: PICKAXE_NFT_ADDRESS,
+          data: mintData,
+          value: 0,
+        },
+        {
+          sponsor: true,
+          header: 'Mint Starter Pickaxe',
+          description: 'Get your free Wooden pickaxe to start mining!',
+          buttonText: 'Mint Pickaxe'
+        }
+      );
 
-      // Wait for transaction confirmation
-      await publicClient.waitForTransactionReceipt({ hash });
+      console.log('✅ Starter pickaxe minted, tx hash:', receipt.hash);
+      console.log(`🔗 View on Etherscan: https://sepolia.etherscan.io/tx/${receipt.hash}`);
 
       // Refresh pickaxe data
       await fetchPickaxe();
 
-      return hash;
+      return receipt.hash;
     } catch (error) {
       console.error('Failed to mint starter pickaxe:', error);
       throw error;
@@ -132,10 +143,10 @@ export const usePickaxe = (address?: string) => {
 
   /**
    * Buy pickaxe of specific tier
-   * @param tier Tier to purchase (1-4)
+   * @param tier Tier to purchase (0-4)
    */
   const buyPickaxe = async (tier: PickaxeTier) => {
-    if (!address || !window.ethereum) {
+    if (!address) {
       throw new Error('Wallet not connected');
     }
 
@@ -145,44 +156,64 @@ export const usePickaxe = (address?: string) => {
 
     setIsBuying(true);
     try {
-      const walletClient = createWalletClient({
-        chain: sepolia,
-        transport: custom(window.ethereum),
-      });
-
       const cost = PICKAXE_CONFIG.COSTS[tier];
       const costWei = parseEther(cost.toString());
 
       // First, approve GLD spending
       console.log(`💰 Approving ${cost} GLD for pickaxe purchase...`);
-      const approveHash = await walletClient.writeContract({
-        address: GOLD_TOKEN_ADDRESS,
+      
+      const approveData = encodeFunctionData({
         abi: GOLD_TOKEN_ABI,
         functionName: 'approve',
         args: [PICKAXE_NFT_ADDRESS, costWei],
-        account: address as `0x${string}`,
       });
 
-      await publicClient.waitForTransactionReceipt({ hash: approveHash });
-      console.log('✅ GLD approved');
+      const approveReceipt = await sendTransaction(
+        {
+          to: GOLD_TOKEN_ADDRESS,
+          data: approveData,
+          value: 0,
+        },
+        {
+          sponsor: true,
+          header: 'Approve GLD',
+          description: `Approve ${cost} GLD for pickaxe purchase`,
+          buttonText: 'Approve'
+        }
+      );
+
+      console.log('✅ GLD approved:', approveReceipt.hash);
 
       // Then, buy pickaxe
       console.log(`🔨 Buying ${PICKAXE_CONFIG.TIERS[tier]} pickaxe...`);
-      const buyHash = await walletClient.writeContract({
-        address: PICKAXE_NFT_ADDRESS,
+      
+      const buyData = encodeFunctionData({
         abi: PICKAXE_NFT_ABI,
         functionName: 'buyPickaxe',
         args: [tier],
-        account: address as `0x${string}`,
       });
 
-      console.log('✅ Buying pickaxe, tx hash:', buyHash);
-      await publicClient.waitForTransactionReceipt({ hash: buyHash });
+      const buyReceipt = await sendTransaction(
+        {
+          to: PICKAXE_NFT_ADDRESS,
+          data: buyData,
+          value: 0,
+        },
+        {
+          sponsor: true,
+          header: 'Buy Pickaxe',
+          description: `Purchase ${PICKAXE_CONFIG.TIERS[tier]} pickaxe for ${cost} GLD`,
+          buttonText: 'Buy Pickaxe'
+        }
+      );
+
+      console.log('✅ Pickaxe purchased, tx hash:', buyReceipt.hash);
+      console.log(`🔗 View on Etherscan: https://sepolia.etherscan.io/tx/${buyReceipt.hash}`);
 
       // Refresh pickaxe data
       await fetchPickaxe();
 
-      return buyHash;
+      return buyReceipt.hash;
     } catch (error) {
       console.error('Failed to buy pickaxe:', error);
       throw error;
@@ -195,50 +226,70 @@ export const usePickaxe = (address?: string) => {
    * Repair current pickaxe
    */
   const repairPickaxe = async () => {
-    if (!address || !window.ethereum || !pickaxe) {
+    if (!address || !pickaxe) {
       throw new Error('No pickaxe to repair');
     }
 
     setIsRepairing(true);
     try {
-      const walletClient = createWalletClient({
-        chain: sepolia,
-        transport: custom(window.ethereum),
-      });
-
       const repairCost = PICKAXE_CONFIG.COSTS[pickaxe.tier] * PICKAXE_CONFIG.REPAIR_COST_PERCENT;
       const costWei = parseEther(repairCost.toString());
 
       // First, approve GLD spending
       console.log(`💰 Approving ${repairCost} GLD for repair...`);
-      const approveHash = await walletClient.writeContract({
-        address: GOLD_TOKEN_ADDRESS,
+      
+      const approveData = encodeFunctionData({
         abi: GOLD_TOKEN_ABI,
         functionName: 'approve',
         args: [PICKAXE_NFT_ADDRESS, costWei],
-        account: address as `0x${string}`,
       });
 
-      await publicClient.waitForTransactionReceipt({ hash: approveHash });
-      console.log('✅ GLD approved');
+      const approveReceipt = await sendTransaction(
+        {
+          to: GOLD_TOKEN_ADDRESS,
+          data: approveData,
+          value: 0,
+        },
+        {
+          sponsor: true,
+          header: 'Approve GLD',
+          description: `Approve ${repairCost} GLD for pickaxe repair`,
+          buttonText: 'Approve'
+        }
+      );
+
+      console.log('✅ GLD approved:', approveReceipt.hash);
 
       // Then, repair pickaxe
       console.log('🔧 Repairing pickaxe...');
-      const repairHash = await walletClient.writeContract({
-        address: PICKAXE_NFT_ADDRESS,
+      
+      const repairData = encodeFunctionData({
         abi: PICKAXE_NFT_ABI,
         functionName: 'repair',
         args: [pickaxe.tokenId],
-        account: address as `0x${string}`,
       });
 
-      console.log('✅ Repairing pickaxe, tx hash:', repairHash);
-      await publicClient.waitForTransactionReceipt({ hash: repairHash });
+      const repairReceipt = await sendTransaction(
+        {
+          to: PICKAXE_NFT_ADDRESS,
+          data: repairData,
+          value: 0,
+        },
+        {
+          sponsor: true,
+          header: 'Repair Pickaxe',
+          description: `Repair your pickaxe for ${repairCost} GLD`,
+          buttonText: 'Repair'
+        }
+      );
+
+      console.log('✅ Pickaxe repaired, tx hash:', repairReceipt.hash);
+      console.log(`🔗 View on Etherscan: https://sepolia.etherscan.io/tx/${repairReceipt.hash}`);
 
       // Refresh pickaxe data
       await fetchPickaxe();
 
-      return repairHash;
+      return repairReceipt.hash;
     } catch (error) {
       console.error('Failed to repair pickaxe:', error);
       throw error;

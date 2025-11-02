@@ -119,7 +119,10 @@ export class MiningScene extends Phaser.Scene {
     // Emit event for UI to show modal
     this.events.emit('level-expired');
     
-    // Return to level 1
+    // Clear expiry and return to level 1
+    useGameStore.getState().setLevel(1); // This clears expiry
+    
+    // Switch scene to level 1
     this.switchToLevel(1);
   }
 
@@ -220,12 +223,22 @@ export class MiningScene extends Phaser.Scene {
 
   /**
    * Switch to a different level (called externally)
+   * Note: If levelExpiry is already set in store (e.g., from purchase), it will be preserved
    */
   public switchToLevel(levelId: LevelId) {
     console.log(`🏔️  Switching to level ${levelId}`);
     
     // Stop all current mining
     this.stopAllMining();
+    
+    // Only update level ID in store, preserving any existing expiry
+    // (expiry is set by purchaseLevelAccess before switchToLevel is called)
+    const currentState = useGameStore.getState();
+    if (levelId !== currentState.currentLevel) {
+      // Don't call setLevel here as it would clear the expiry that was just set
+      // Instead, manually update only the currentLevel
+      useGameStore.setState({ currentLevel: levelId });
+    }
     
     // Update spawner
     this.oreSpawner.setLevel(levelId);

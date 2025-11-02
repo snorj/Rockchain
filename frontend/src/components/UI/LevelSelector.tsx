@@ -5,6 +5,7 @@ import { useLevelAccess } from '../../blockchain/hooks/useLevelAccess';
 import { LEVELS, canAccessLevel, formatTimeRemaining } from '../../game/config/levels';
 import type { LevelId } from '../../game/config/levels';
 import { PICKAXES } from '../../game/config/pickaxes';
+import { LevelPurchaseModal } from './LevelPurchaseModal';
 import './LevelSelector.css';
 
 interface LevelSelectorProps {
@@ -33,6 +34,8 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
   
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [selectedLevel, setSelectedLevel] = useState<LevelId | null>(null);
   
   // Update timer every second
   useEffect(() => {
@@ -80,21 +83,29 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
       onLevelChange(levelId);
       setIsExpanded(false);
     } else {
-      // Paid level - initiate purchase
-      if (gold < level.accessCost) {
-        alert(`Not enough gold! You need ${level.accessCost}g to access this level.`);
-        return;
-      }
-      
-      try {
-        const result = await purchaseLevelAccess(levelId);
-        onPurchaseSuccess(levelId, result.expiryTime);
-        setIsExpanded(false);
-      } catch (error: any) {
-        console.error('Failed to purchase level access:', error);
-        alert(`Failed to purchase level access: ${error.message || 'Unknown error'}`);
-      }
+      // Paid level - show purchase modal
+      setSelectedLevel(levelId);
+      setShowPurchaseModal(true);
     }
+  };
+  
+  const handlePurchaseConfirm = async () => {
+    if (!selectedLevel) return;
+    
+    try {
+      const result = await purchaseLevelAccess(selectedLevel);
+      onPurchaseSuccess(selectedLevel, result.expiryTime);
+      setShowPurchaseModal(false);
+      setIsExpanded(false);
+    } catch (error: any) {
+      // Error is handled by modal
+      throw error;
+    }
+  };
+  
+  const handlePurchaseCancel = () => {
+    setShowPurchaseModal(false);
+    setSelectedLevel(null);
   };
   
   return (
@@ -185,6 +196,16 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
             );
           })}
         </div>
+      )}
+      
+      {showPurchaseModal && selectedLevel && (
+        <LevelPurchaseModal
+          levelId={selectedLevel}
+          currentGold={gold}
+          onConfirm={handlePurchaseConfirm}
+          onCancel={handlePurchaseCancel}
+          isProcessing={isPurchasing}
+        />
       )}
     </div>
   );

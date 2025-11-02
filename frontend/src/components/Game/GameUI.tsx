@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useGameStore } from '../../store/gameStore';
 import { useGoldBalance } from '../../blockchain/hooks/useGoldBalance';
+import { usePickaxe } from '../../blockchain/hooks/usePickaxe';
 import { MaterialInfoPanel } from '../UI/MaterialInfoPanel';
 import { LevelSelector } from '../UI/LevelSelector';
 import { LevelExpiryModal } from '../UI/LevelExpiryModal';
@@ -27,9 +28,26 @@ export const GameUI: React.FC = () => {
   // Fetch blockchain GLD balance
   const { balance: blockchainBalance, isLoading: balanceLoading } = useGoldBalance(embeddedWallet?.address);
   
+  // Fetch blockchain pickaxe
+  const { pickaxe: blockchainPickaxe, hasPickaxe, isLoading: pickaxeLoading } = usePickaxe(embeddedWallet?.address);
+  
   const gold = useGameStore(state => state.gold);
   const currentLevel = useGameStore(state => state.currentLevel);
   const currentPickaxe = useGameStore(state => state.currentPickaxe);
+  
+  /**
+   * Convert blockchain tier (0-4) to game pickaxe tier name
+   */
+  const getGamePickaxeTier = (contractTier: number): PickaxeTier => {
+    const tierMap: Record<number, PickaxeTier> = {
+      0: 'wooden',
+      1: 'stone',  // Iron in contract
+      2: 'steel',
+      3: 'mythril',
+      4: 'adamantite'
+    };
+    return tierMap[contractTier] || 'wooden';
+  };
   
   /**
    * Sync blockchain balance with game store on load and when it changes
@@ -40,6 +58,29 @@ export const GameUI: React.FC = () => {
       console.log(`💰 Synced blockchain balance: ${blockchainBalance} GLD`);
     }
   }, [blockchainBalance, balanceLoading]);
+  
+  /**
+   * Sync blockchain pickaxe with game store on load and when it changes
+   */
+  useEffect(() => {
+    if (!pickaxeLoading && blockchainPickaxe) {
+      const gameTier = getGamePickaxeTier(blockchainPickaxe.tier);
+      const currentGamePickaxe = useGameStore.getState().currentPickaxe;
+      
+      // Only update if different to avoid unnecessary updates
+      if (gameTier !== currentGamePickaxe) {
+        useGameStore.getState().setPickaxe(gameTier);
+        
+        // Update the Phaser scene as well
+        const scene = getMiningScene();
+        if (scene) {
+          scene.setPickaxeTier(gameTier);
+        }
+        
+        console.log(`⛏️  Synced blockchain pickaxe: ${gameTier} (contract tier ${blockchainPickaxe.tier})`);
+      }
+    }
+  }, [blockchainPickaxe, pickaxeLoading]);
   
   /**
    * Get MiningScene reference from Phaser

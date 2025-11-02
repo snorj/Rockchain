@@ -10,13 +10,13 @@ import type { PickaxeTier } from './constants';
  * Place pickaxe sprites in /public/assets/sprites/pickaxes/
  * Expected files:
  * - pickaxe-wooden.png
- * - pickaxe-iron.png
+ * - pickaxe-stone.png (maps to Iron tier in contract)
  * - pickaxe-steel.png
  * - pickaxe-mythril.png
  * - pickaxe-adamantite.png
  */
 export function getPickaxeSpritePath(tier: PickaxeTier): string {
-  const pickaxeNames = ['wooden', 'iron', 'steel', 'mythril', 'adamantite'];
+  const pickaxeNames = ['wooden', 'stone', 'steel', 'mythril', 'adamantite'];
   return `/assets/sprites/pickaxes/pickaxe-${pickaxeNames[tier]}.png`;
 }
 
@@ -24,7 +24,7 @@ export function getPickaxeSpritePath(tier: PickaxeTier): string {
  * Get pickaxe texture key for Phaser
  */
 export function getPickaxeTextureKey(tier: PickaxeTier): string {
-  const pickaxeNames = ['wooden', 'iron', 'steel', 'mythril', 'adamantite'];
+  const pickaxeNames = ['wooden', 'stone', 'steel', 'mythril', 'adamantite'];
   return `pickaxe-${pickaxeNames[tier]}`;
 }
 
@@ -32,7 +32,7 @@ export function getPickaxeTextureKey(tier: PickaxeTier): string {
  * Get pickaxe tier name
  */
 export function getPickaxeTierName(tier: PickaxeTier): string {
-  const names = ['Wooden', 'Iron', 'Steel', 'Mythril', 'Adamantite'];
+  const names = ['Wooden', 'Stone', 'Steel', 'Mythril', 'Adamantite'];
   return names[tier] || 'Unknown';
 }
 

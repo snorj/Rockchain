@@ -53,7 +53,10 @@ export class PreloadScene extends Phaser.Scene {
       } else {
         // Other materials use tiles 05-08
         for (let i = 5; i <= 8; i++) {
-          const tileNum = i.toString().padStart(2, '0');
+          // Gold uses 3-digit tile names (tile005, tile006, etc.)
+          const tileNum = material === 'gold' 
+            ? i.toString().padStart(3, '0') 
+            : i.toString().padStart(2, '0');
           const key = `${material}-rock-${i}`;
           const path = `${basePath}/tile${tileNum}.png`;
           

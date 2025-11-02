@@ -1,9 +1,11 @@
 /**
  * Pickaxe configuration
  * Based on available assets in /public/assets/sprites/pickaxes
+ * Order matches smart contract enum: Wooden, Iron, Steel, Mythril, Adamantite
+ * Note: "stone" in game = "Iron" tier in contract
  */
 
-export type PickaxeTier = 'wooden' | 'steel' | 'iron' | 'mythril' | 'adamantite';
+export type PickaxeTier = 'wooden' | 'stone' | 'steel' | 'mythril' | 'adamantite';
 
 export interface PickaxeConfig {
   id: PickaxeTier;
@@ -19,6 +21,9 @@ export interface PickaxeConfig {
 /**
  * Complete pickaxe database
  * Each pickaxe unlocks access to the corresponding level
+ * 
+ * IMPORTANT: Order matches smart contract enum Tier { Wooden, Iron, Steel, Mythril, Adamantite }
+ * Prices match smart contract: [0, 100, 300, 1000, 5000] GLD
  */
 export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
   wooden: {
@@ -31,32 +36,32 @@ export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
     spritePath: '/assets/sprites/pickaxes/wooden/pickaxe-wooden.png',
     color: '#8B4513'
   },
+  stone: {
+    id: 'stone',
+    name: 'Stone Pickaxe',
+    tier: 2,
+    miningSpeed: 1.5,      // 50% faster (0.8x mining time)
+    price: 100,            // Contract tier 1 cost (Iron tier in contract)
+    levelUnlocked: 2,
+    spritePath: '/assets/sprites/pickaxes/stone/pickaxe-stone.png',
+    color: '#708090'
+  },
   steel: {
     id: 'steel',
     name: 'Steel Pickaxe',
-    tier: 2,
-    miningSpeed: 1.5,      // 50% faster
-    price: 150,
-    levelUnlocked: 2,
+    tier: 3,
+    miningSpeed: 2.0,      // 2x faster (0.65x mining time)
+    price: 300,            // Contract tier 2 cost
+    levelUnlocked: 3,
     spritePath: '/assets/sprites/pickaxes/steel/pickaxe-steel.png',
     color: '#4682B4'
-  },
-  iron: {
-    id: 'iron',
-    name: 'Iron Pickaxe',
-    tier: 3,
-    miningSpeed: 2.0,      // 2x faster
-    price: 800,
-    levelUnlocked: 3,
-    spritePath: '/assets/sprites/pickaxes/iron/pickaxe-iron.png',
-    color: '#708090'
   },
   mythril: {
     id: 'mythril',
     name: 'Mythril Pickaxe',
     tier: 4,
-    miningSpeed: 3.0,      // 3x faster
-    price: 3500,
+    miningSpeed: 3.0,      // 3x faster (0.5x mining time)
+    price: 1000,           // Contract tier 3 cost
     levelUnlocked: 4,
     spritePath: '/assets/sprites/pickaxes/mythril/pickaxe-mythril.png',
     color: '#7FB3D5'
@@ -65,8 +70,8 @@ export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
     id: 'adamantite',
     name: 'Adamantite Pickaxe',
     tier: 5,
-    miningSpeed: 4.5,      // 4.5x faster
-    price: 15000,
+    miningSpeed: 4.5,      // 4.5x faster (0.35x mining time)
+    price: 5000,           // Contract tier 4 cost
     levelUnlocked: 5,
     spritePath: '/assets/sprites/pickaxes/adamantite/pickaxe-adamantite.png',
     color: '#FF1744'
