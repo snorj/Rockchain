@@ -2,11 +2,11 @@ import { sepolia } from 'viem/chains';
 import type { PrivyClientConfig } from '@privy-io/react-auth';
 
 export const privyConfig: PrivyClientConfig = {
-  loginMethods: ['email', 'google', 'twitter'],
+  loginMethods: ['email'],
   appearance: {
     theme: 'dark',
     accentColor: '#FFD700',
-    logo: 'https://em-content.zobj.net/thumbs/120/apple/354/pick_26cf-fe0f.png',
+    logo: '/assets/sprites/pickaxes/steel/pickaxe-steel.png',
   },
   embeddedWallets: {
     ethereum: {

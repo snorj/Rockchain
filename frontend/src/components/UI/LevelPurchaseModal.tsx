@@ -29,10 +29,12 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
   const [errorMessage, setErrorMessage] = useState<string>('');
   
   const level = LEVELS[levelId];
-  const durationMinutes = Math.floor(level.accessDuration / 60);
-  const costPerMinute = (level.accessCost / durationMinutes).toFixed(1);
-  const goldAfterPurchase = currentGold - level.accessCost;
-  const canAfford = currentGold >= level.accessCost;
+  // Per-minute pricing: accessCost is the cost per minute, accessDuration is 60 (1 minute blocks)
+  const minutes = 1; // Start with 1 minute
+  const costPerMinute = level.accessCost;
+  const totalCost = costPerMinute * minutes;
+  const goldAfterPurchase = currentGold - totalCost;
+  const canAfford = currentGold >= totalCost;
   
   const handleConfirm = async () => {
     try {
@@ -56,8 +58,8 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
         return (
           <>
             <div className="modal-header">
-              <h2 className="modal-title">🔓 Unlock {level.name}?</h2>
-              <p className="modal-subtitle">Purchase temporary access to mine premium ores</p>
+              <h2 className="modal-title">⏱️ Start Mining Session</h2>
+              <p className="modal-subtitle">Pay per minute to mine at {level.name}</p>
             </div>
             
             <div className="modal-body">
@@ -74,21 +76,21 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
               </div>
               
               <div className="purchase-details">
-                <h3 className="details-header">Purchase Details</h3>
+                <h3 className="details-header">Session Details</h3>
                 
                 <div className="detail-row">
-                  <span className="detail-label">⏰ Access Duration:</span>
-                  <span className="detail-value highlight">{durationMinutes} minutes</span>
+                  <span className="detail-label">📊 Price:</span>
+                  <span className="detail-value highlight">{costPerMinute} GLD/minute</span>
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-label">⏰ Duration:</span>
+                  <span className="detail-value highlight">{minutes} minute</span>
                 </div>
                 
                 <div className="detail-row">
                   <span className="detail-label">💰 Total Cost:</span>
-                  <span className="detail-value highlight">{level.accessCost} GLD</span>
-                </div>
-                
-                <div className="detail-row">
-                  <span className="detail-label">📊 Cost Per Minute:</span>
-                  <span className="detail-value">{costPerMinute} GLD/min</span>
+                  <span className="detail-value highlight">{totalCost} GLD</span>
                 </div>
                 
                 <div className="detail-row separator">
@@ -112,23 +114,24 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
                 </div>
                 <div className={`requirement-item ${canAfford ? 'met' : 'unmet'}`}>
                   <span className="req-check">{canAfford ? '✓' : '✗'}</span>
-                  <span>💰 {level.accessCost} GLD</span>
+                  <span>💰 {totalCost} GLD</span>
                 </div>
               </div>
               
               {!canAfford && (
                 <div className="warning-box">
-                  ⚠️ Insufficient gold! You need {level.accessCost - currentGold} more GLD to purchase this level.
+                  ⚠️ Insufficient gold! You need {totalCost - currentGold} more GLD to start this session.
                 </div>
               )}
               
               <div className="info-box">
                 <p><strong>How it works:</strong></p>
                 <ul>
-                  <li>You'll pay {level.accessCost} GLD upfront</li>
-                  <li>Get {durationMinutes} minutes of unlimited mining access</li>
-                  <li>Timer starts immediately after purchase</li>
-                  <li>Access expires when timer runs out</li>
+                  <li>Pay {totalCost} GLD for {minutes} minute of mining</li>
+                  <li>Session timer starts immediately</li>
+                  <li>Mine as much as you can within the time</li>
+                  <li>Return to Level 1 when time expires</li>
+                  <li>Break-even rate: ~1 ore per second</li>
                 </ul>
               </div>
             </div>
@@ -146,7 +149,7 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
                 onClick={handleConfirm}
                 disabled={!canAfford || isProcessing}
               >
-                {canAfford ? `Purchase for ${level.accessCost} GLD` : 'Not Enough Gold'}
+                {canAfford ? `Start Session (${totalCost} GLD)` : 'Not Enough Gold'}
               </button>
             </div>
           </>
@@ -163,7 +166,7 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
             <div className="modal-body processing">
               <div className="spinner"></div>
               <p className="processing-message">
-                Approving {level.accessCost} GLD for the Game contract
+                Approving {totalCost} GLD for the Game contract
               </p>
               <p className="processing-hint">
                 Please approve the transaction in your wallet popup
@@ -177,7 +180,7 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
                 <div className="step-connector"></div>
                 <div className="step">
                   <div className="step-number">2</div>
-                  <div className="step-label">Purchase Access</div>
+                  <div className="step-label">Start Session</div>
                 </div>
               </div>
             </div>
@@ -188,14 +191,14 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
         return (
           <>
             <div className="modal-header">
-              <h2 className="modal-title">🔓 Purchasing Access...</h2>
+              <h2 className="modal-title">⏱️ Starting Session...</h2>
               <p className="modal-subtitle">Step 2 of 2</p>
             </div>
             
             <div className="modal-body processing">
               <div className="spinner"></div>
               <p className="processing-message">
-                Unlocking {level.name}
+                Starting {minutes} minute session at {level.name}
               </p>
               <p className="processing-hint">
                 Please confirm the transaction in your wallet popup
@@ -209,7 +212,7 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
                 <div className="step-connector completed"></div>
                 <div className="step active">
                   <div className="step-number">2</div>
-                  <div className="step-label">Purchase Access</div>
+                  <div className="step-label">Start Session</div>
                 </div>
               </div>
             </div>
@@ -220,17 +223,17 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
         return (
           <>
             <div className="modal-header success">
-              <h2 className="modal-title">✅ Access Granted!</h2>
-              <p className="modal-subtitle">You can now mine in {level.name}</p>
+              <h2 className="modal-title">✅ Session Started!</h2>
+              <p className="modal-subtitle">Timer started for {level.name}</p>
             </div>
             
             <div className="modal-body success">
-              <div className="success-icon">🎉</div>
+              <div className="success-icon">⏱️</div>
               <p className="success-message">
-                You have {durationMinutes} minutes of access
+                You have {minutes} minute to mine
               </p>
               <p className="success-hint">
-                Start mining now to make the most of your time!
+                Watch the timer at the top of the screen!
               </p>
             </div>
           </>

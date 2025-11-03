@@ -6,11 +6,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./GoldToken.sol";
 
 /**
- * @title PickaxeNFT
- * @notice ERC-721 NFTs representing mining pickaxes with different tiers and durability
+ * @title PickaxeNFTV2
+ * @notice ERC-721 NFTs representing mining pickaxes with updated pricing for per-minute economy
  * @dev Each pickaxe has a tier (Wooden to Adamantite) that determines mining speed and ore access
  */
-contract PickaxeNFT is ERC721, Ownable {
+contract PickaxeNFTV2 is ERC721, Ownable {
     // Pickaxe tiers (0-4)
     enum Tier { Wooden, Iron, Steel, Mythril, Adamantite }
     
@@ -28,7 +28,7 @@ contract PickaxeNFT is ERC721, Ownable {
     mapping(uint256 => Pickaxe) public pickaxes;
     mapping(address => uint256) public playerPickaxe; // One active pickaxe per player
     
-    // Tier costs (in GLD with 18 decimals)
+    // Updated tier costs for per-minute pricing economy
     uint256[5] public tierCosts;
     
     // Base durability for each tier
@@ -43,12 +43,12 @@ contract PickaxeNFT is ERC721, Ownable {
         require(_goldToken != address(0), "Invalid token address");
         goldToken = GoldToken(_goldToken);
         
-        // Set tier costs
+        // Set updated tier costs (5x increase for per-minute economy)
         tierCosts[0] = 0;                  // Wooden: Free
-        tierCosts[1] = 100 * 1e18;         // Iron: 100 GLD
-        tierCosts[2] = 300 * 1e18;         // Steel: 300 GLD
-        tierCosts[3] = 1000 * 1e18;        // Mythril: 1000 GLD
-        tierCosts[4] = 5000 * 1e18;        // Adamantite: 5000 GLD
+        tierCosts[1] = 500 * 1e18;         // Iron: 500 GLD (was 100)
+        tierCosts[2] = 1500 * 1e18;        // Steel: 1500 GLD (was 300)
+        tierCosts[3] = 6000 * 1e18;        // Mythril: 6000 GLD (was 1000)
+        tierCosts[4] = 20000 * 1e18;       // Adamantite: 20000 GLD (was 5000)
         
         // Set tier durability
         tierDurability[0] = 100;   // Wooden: 100 uses
@@ -169,6 +169,16 @@ contract PickaxeNFT is ERC721, Ownable {
         if (p.tier == Tier.Adamantite) return 35;
         
         return 100; // Default
+    }
+    
+    /**
+     * @notice Get tier cost
+     * @param tier Tier enum value
+     * @return cost Cost in wei
+     */
+    function getTierCost(Tier tier) external view returns (uint256 cost) {
+        require(uint(tier) < tierCosts.length, "Invalid tier");
+        return tierCosts[uint(tier)];
     }
     
     /**

@@ -19,11 +19,8 @@ export const WalletButton = () => {
     return null; // Don't show anything if not authenticated
   }
 
-  // Get user's display name (email or social username)
-  const displayName = user?.email?.address || 
-                      user?.google?.email || 
-                      user?.twitter?.username ||
-                      'Player';
+  // Get user's display name (email address)
+  const displayName = user?.email?.address || 'Player';
 
   return (
     <div className="user-profile">

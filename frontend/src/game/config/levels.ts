@@ -49,8 +49,8 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     name: 'Stone Mine',
     description: 'Deeper tunnels rich with common metals.',
     requiredPickaxe: 'stone',
-    accessCost: 50,
-    accessDuration: 120,  // 2 minutes
+    accessCost: 420,      // Per minute cost
+    accessDuration: 60,   // 1 minute blocks
     backgroundColor: '#1a1a1a',
     spawns: [
       { material: 'stone', weight: 10 },
@@ -68,8 +68,8 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     name: 'Precious Mine',
     description: 'Ancient veins of valuable metals and the first gems.',
     requiredPickaxe: 'steel',
-    accessCost: 200,
-    accessDuration: 120,
+    accessCost: 2400,     // Per minute cost
+    accessDuration: 60,   // 1 minute blocks
     backgroundColor: '#1a1526',
     spawns: [
       { material: 'iron', weight: 10 },
@@ -87,8 +87,8 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     name: 'Gem Cavern',
     description: 'Crystalline caves filled with precious gems and rare metals.',
     requiredPickaxe: 'mythril',
-    accessCost: 500,
-    accessDuration: 120,
+    accessCost: 6900,     // Per minute cost
+    accessDuration: 60,   // 1 minute blocks
     backgroundColor: '#1a0d26',
     spawns: [
       { material: 'silver', weight: 5 },
@@ -109,8 +109,8 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     name: 'Mythic Depths',
     description: 'The deepest reaches where legendary materials form.',
     requiredPickaxe: 'adamantite',
-    accessCost: 1500,
-    accessDuration: 120,
+    accessCost: 18000,    // Per minute cost
+    accessDuration: 60,   // 1 minute blocks
     backgroundColor: '#0d0d1a',
     spawns: [
       { material: 'platinum', weight: 5 },

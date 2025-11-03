@@ -10,6 +10,16 @@ import { MATERIALS } from '../game/config/materials';
 export type GameInventory = Partial<Record<MaterialType, number>>;
 
 /**
+ * Mining session state (for per-minute pricing)
+ */
+export interface MiningSession {
+  levelId: LevelId;
+  startTime: number;
+  endTime: number;
+  active: boolean;
+}
+
+/**
  * Main game state interface
  */
 export interface GameState {
@@ -18,8 +28,11 @@ export interface GameState {
   currentPickaxe: PickaxeTier;
   currentLevel: LevelId;
   
-  // Level access tracking
+  // Level access tracking (legacy - kept for compatibility)
   levelExpiry: number | null;  // Timestamp when current level access expires (null = unlimited)
+  
+  // Mining session (per-minute pricing)
+  activeSession: MiningSession | null;
   
   // Inventory (only materials with count > 0)
   inventory: GameInventory;
@@ -40,6 +53,10 @@ export interface GameState {
   setPickaxe: (pickaxe: PickaxeTier) => void;
   setLevel: (level: LevelId, expiryTimestamp?: number) => void;
   
+  // Session actions
+  setActiveSession: (session: MiningSession) => void;
+  clearSession: () => void;
+  
   pauseGame: () => void;
   resumeGame: () => void;
 }
@@ -53,6 +70,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   currentPickaxe: 'wooden',
   currentLevel: 1,
   levelExpiry: null,
+  activeSession: null,
   inventory: {},
   isPlaying: true,
   isPaused: false,
@@ -141,6 +159,26 @@ export const useGameStore = create<GameState>((set, get) => ({
       levelExpiry: expiryTimestamp || null
     });
     console.log(`🏔️  Entered Level ${level}${expiryTimestamp ? ` (expires at ${new Date(expiryTimestamp).toLocaleTimeString()})` : ''}`);
+  },
+  
+  /**
+   * Set active mining session
+   */
+  setActiveSession: (session: MiningSession) => {
+    set({ activeSession: session });
+    console.log(`⏱️  Mining session started for Level ${session.levelId} until ${new Date(session.endTime).toLocaleTimeString()}`);
+  },
+  
+  /**
+   * Clear mining session (return to Level 1)
+   */
+  clearSession: () => {
+    set({ 
+      activeSession: null,
+      currentLevel: 1,
+      levelExpiry: null
+    });
+    console.log('⏱️  Mining session ended, returned to Level 1');
   },
   
   /**

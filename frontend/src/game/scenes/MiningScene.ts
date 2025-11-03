@@ -7,7 +7,6 @@ import type { LevelId } from '../config/levels';
 import { LEVELS } from '../config/levels';
 import type { PickaxeTier } from '../config/pickaxes';
 import { PICKAXES } from '../config/pickaxes';
-
 /**
  * MiningScene - Click to mine ores with continuous progress
  * Supports mining multiple ores simultaneously
@@ -22,6 +21,9 @@ export class MiningScene extends Phaser.Scene {
   
   // Level timer
   private levelTimer: Phaser.Time.TimerEvent | null = null;
+  
+  // Track mining start times for duration calculation
+  private miningStartTimes: Map<OreNode, number> = new Map();
   
   constructor() {
     super({ key: 'MiningScene' });
@@ -86,16 +88,34 @@ export class MiningScene extends Phaser.Scene {
   }
 
   /**
-   * Setup level timer if current level has expiry
+   * Setup level timer if current level has an active session
    */
   private setupLevelTimer() {
     const gameState = useGameStore.getState();
     
-    if (gameState.levelExpiry) {
-      const timeRemaining = gameState.levelExpiry - Date.now();
+    // Check for active session (per-minute pricing)
+    if (gameState.activeSession && gameState.activeSession.active) {
+      const timeRemaining = gameState.activeSession.endTime - Date.now();
       
       if (timeRemaining > 0) {
         // Set up countdown
+        this.levelTimer = this.time.addEvent({
+          delay: timeRemaining,
+          callback: this.onSessionExpired,
+          callbackScope: this
+        });
+        
+        console.log(`⏱️  Session expires in ${Math.floor(timeRemaining / 1000)}s`);
+      } else {
+        // Already expired
+        this.onSessionExpired();
+      }
+    }
+    // Fallback to legacy levelExpiry for compatibility
+    else if (gameState.levelExpiry) {
+      const timeRemaining = gameState.levelExpiry - Date.now();
+      
+      if (timeRemaining > 0) {
         this.levelTimer = this.time.addEvent({
           delay: timeRemaining,
           callback: this.onLevelExpired,
@@ -104,14 +124,29 @@ export class MiningScene extends Phaser.Scene {
         
         console.log(`⏰ Level expires in ${Math.floor(timeRemaining / 1000)}s`);
       } else {
-        // Already expired
         this.onLevelExpired();
       }
     }
   }
 
   /**
-   * Called when level access expires
+   * Called when mining session expires (per-minute pricing)
+   */
+  private onSessionExpired() {
+    console.log('⏱️  Mining session expired!');
+    
+    // Emit event for UI to show notification
+    this.events.emit('session-expired');
+    
+    // Clear session and return to level 1
+    useGameStore.getState().clearSession();
+    
+    // Switch scene to level 1
+    this.switchToLevel(1);
+  }
+
+  /**
+   * Called when level access expires (legacy)
    */
   private onLevelExpired() {
     console.log('⏰ Level access expired!');
@@ -135,10 +170,27 @@ export class MiningScene extends Phaser.Scene {
       return;
     }
     
+    // Validate session access (for levels 2+)
+    const gameState = useGameStore.getState();
+    if (gameState.currentLevel > 1) {
+      // Check if session is active and not expired
+      if (!gameState.activeSession || !gameState.activeSession.active) {
+        console.warn('⚠️  No active session - cannot mine');
+        return;
+      }
+      
+      if (Date.now() >= gameState.activeSession.endTime) {
+        console.warn('⚠️  Session expired - cannot mine');
+        this.onSessionExpired();
+        return;
+      }
+    }
+    
     // Check if clicked on an ore
     const clickedOre = this.oreSpawner.getOreAt(pointer.x, pointer.y);
+    const hitOre = clickedOre && !clickedOre.getIsMining();
     
-    if (clickedOre && !clickedOre.getIsMining()) {
+    if (hitOre) {
       this.startMiningOre(clickedOre, pointer.x, pointer.y);
     }
   }
@@ -153,6 +205,9 @@ export class MiningScene extends Phaser.Scene {
     
     // Start mining the ore
     ore.startMining(pickaxeConfig.miningSpeed);
+    
+    // Track mining start time
+    this.miningStartTimes.set(ore, Date.now());
     
     // Add to mining set
     this.miningOres.add(ore);
@@ -198,6 +253,10 @@ export class MiningScene extends Phaser.Scene {
    */
   private handleOreMined(data: { material: MaterialType; value: number; node: OreNode }) {
     console.log(`✨ Mined ${data.material} (worth ${data.value} gold)`);
+    
+    // Clean up tracking
+    const startTime = this.miningStartTimes.get(data.node);
+    this.miningStartTimes.delete(data.node);
     
     // Add to inventory
     useGameStore.getState().addMaterial(data.material);
@@ -267,6 +326,7 @@ export class MiningScene extends Phaser.Scene {
    */
   public setPickaxeTier(pickaxe: PickaxeTier) {
     this.oreSpawner.setPickaxe(pickaxe);
+    
     console.log(`⛏️  Updated pickaxe to ${pickaxe}`);
     
     // Stop all current mining since speed has changed

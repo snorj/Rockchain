@@ -42,6 +42,7 @@
   background: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.4);
   transform: scale(1.05);
+  z-index: 1001;
 }
 
 /* Item Icon */
@@ -88,6 +89,7 @@
   text-align: center;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
   pointer-events: none;
+  z-index: 2;
 }
 
 /* Hover Tooltip */
