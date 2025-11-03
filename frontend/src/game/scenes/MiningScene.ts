@@ -231,8 +231,19 @@ export class MiningScene extends Phaser.Scene {
     // Create pickaxe sprite for this ore
     const pickaxeSprite = this.add.image(x, y + 30, pickaxeTextureKey);
     pickaxeSprite.setScale(0.2); // Much smaller pickaxe
-    pickaxeSprite.setOrigin(0.3, 0.3); // Pivot point for rotation
+    pickaxeSprite.setOrigin(0.5, 1.0); // Pivot point at bottom middle for swinging
     pickaxeSprite.setDepth(100);
+    
+    // Randomly flip pickaxe horizontally (50% chance)
+    const isFlipped = Math.random() > 0.5;
+    if (isFlipped) {
+      pickaxeSprite.setFlipX(true);
+    }
+    
+    // Offset pickaxe: half width right (or left if flipped), quarter height down
+    const horizontalOffset = isFlipped ? -0.5 : 0.5;
+    pickaxeSprite.x += pickaxeSprite.displayWidth * horizontalOffset;
+    pickaxeSprite.y += pickaxeSprite.displayHeight * 0.25;
     
     // Store reference
     this.pickaxeSprites.set(ore, pickaxeSprite);

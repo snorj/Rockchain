@@ -15,6 +15,7 @@ export class Player extends Phaser.GameObjects.Sprite {
   private currentOreTarget?: any; // Reference to ore being mined
   private pickaxeSprite?: Phaser.GameObjects.Sprite;
   private pickaxeTier: PickaxeTier = 0;
+  private isPickaxeFlipped: boolean = false;
   
   constructor(scene: Phaser.Scene, x: number, y: number) {
     // Use a simple circle placeholder for now (can be replaced with character sprite)
@@ -61,7 +62,18 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.pickaxeSprite = this.scene.add.sprite(this.x + 12, this.y + 8, textureKey);
     this.pickaxeSprite.setScale(0.2);
     this.pickaxeSprite.setDepth(9); // Just below player
-    this.pickaxeSprite.setOrigin(0.2, 0.8);
+    this.pickaxeSprite.setOrigin(0.5, 1.0); // Pivot at bottom middle for swinging motion
+    
+    // Randomly flip pickaxe horizontally (50% chance)
+    this.isPickaxeFlipped = Math.random() > 0.5;
+    if (this.isPickaxeFlipped) {
+      this.pickaxeSprite.setFlipX(true);
+    }
+    
+    // Offset pickaxe: half width right (or left if flipped), quarter height down
+    const horizontalOffset = this.isPickaxeFlipped ? -0.5 : 0.5;
+    this.pickaxeSprite.x += this.pickaxeSprite.displayWidth * horizontalOffset;
+    this.pickaxeSprite.y += this.pickaxeSprite.displayHeight * 0.25;
   }
   
   /**
@@ -126,8 +138,9 @@ export class Player extends Phaser.GameObjects.Sprite {
       onUpdate: () => {
         // Update pickaxe position to follow player
         if (this.pickaxeSprite) {
-          const offsetX = Math.cos(angle) * 12;
-          const offsetY = Math.sin(angle) * 12;
+          const horizontalOffset = this.isPickaxeFlipped ? -0.5 : 0.5;
+          const offsetX = Math.cos(angle) * 12 + this.pickaxeSprite.displayWidth * horizontalOffset;
+          const offsetY = Math.sin(angle) * 12 + this.pickaxeSprite.displayHeight * 0.25;
           this.pickaxeSprite.setPosition(this.x + offsetX, this.y + offsetY);
         }
       },

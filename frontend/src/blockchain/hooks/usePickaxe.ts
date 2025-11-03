@@ -3,7 +3,7 @@ import { createPublicClient, http, parseEther, encodeFunctionData } from 'viem';
 import { sepolia } from 'viem/chains';
 import { useSendTransaction } from '@privy-io/react-auth';
 import { 
-  PICKAXE_NFT_ABI, 
+  PICKAXE_NFT_V2_ABI as PICKAXE_NFT_ABI, 
   PICKAXE_NFT_ADDRESS, 
   GOLD_TOKEN_ABI,
   GOLD_TOKEN_ADDRESS 
