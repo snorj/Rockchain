@@ -3,6 +3,7 @@ import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useGameStore, getInventoryValue } from '../../store/gameStore';
 import { useSellResourcesV2, calculateTotalValue } from '../../blockchain/hooks/useSellResourcesV2';
 import { usePickaxe } from '../../blockchain/hooks/usePickaxe';
+import { useGoldBalance } from '../../blockchain/hooks/useGoldBalance';
 import { PICKAXES, getNextPickaxe } from '../../game/config/pickaxes';
 import type { PickaxeTier } from '../../game/config/pickaxes';
 import { MATERIALS } from '../../game/config/materials';
@@ -37,6 +38,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   
   const { sellResources, isLoading: isSelling } = useSellResourcesV2();
   const { buyPickaxe, isBuying } = usePickaxe(embeddedWallet?.address);
+  const { balance: blockchainBalance, isLoading: balanceLoading } = useGoldBalance(embeddedWallet?.address);
   
   const [activeTab, setActiveTab] = useState<ShopTab>('sell');
   const [sellingModalOpen, setSellingModalOpen] = useState(false);
@@ -77,8 +79,14 @@ export const ShopModal: React.FC<ShopModalProps> = ({
     
     const pickaxeConfig = PICKAXES[pickaxe];
     
-    if (gold < pickaxeConfig.price) {
-      alert(`Not enough gold! You need ${pickaxeConfig.price}g.`);
+    // Check blockchain balance instead of local state
+    // Use blockchain balance if available, otherwise fall back to local state
+    const actualBalance = balanceLoading ? gold : blockchainBalance;
+    
+    console.log(`💰 Balance check - Local: ${gold}g, Blockchain: ${blockchainBalance}g, Using: ${actualBalance}g`);
+    
+    if (actualBalance < pickaxeConfig.price) {
+      alert(`Not enough gold! You need ${pickaxeConfig.price}g but only have ${actualBalance}g on-chain. If you just sold materials, please wait a few seconds for the transaction to confirm.`);
       return;
     }
     
@@ -110,7 +118,7 @@ export const ShopModal: React.FC<ShopModalProps> = ({
       
       if (error.message) {
         if (error.message.includes('Insufficient GLD')) {
-          errorMessage = 'Insufficient GLD balance in your wallet. You may need to sell materials first or your displayed balance may not be synced.';
+          errorMessage = `Insufficient GLD balance. Your on-chain balance is ${blockchainBalance}g but you need ${pickaxeConfig.price}g. If you just sold materials, please wait for the transaction to confirm and try again.`;
         } else if (error.message.includes('user rejected')) {
           errorMessage = 'Transaction was rejected';
         } else if (error.message.includes('Already has pickaxe')) {
@@ -181,6 +189,11 @@ export const ShopModal: React.FC<ShopModalProps> = ({
         <div className="shop-balance">
           <span>Your Gold:</span>
           <strong>{gold}g</strong>
+          {!balanceLoading && Math.abs(gold - blockchainBalance) > 0.01 && (
+            <span className="balance-warning" style={{ fontSize: '12px', color: '#ff9800', marginLeft: '10px' }}>
+              (On-chain: {blockchainBalance}g - syncing...)
+            </span>
+          )}
         </div>
         
         <div className="shop-tabs">
@@ -306,14 +319,16 @@ export const ShopModal: React.FC<ShopModalProps> = ({
                       <button
                         className="btn-primary btn-large"
                         onClick={() => handlePurchasePickaxe(nextPickaxe.id)}
-                        disabled={gold < nextPickaxe.price || isBuying}
+                        disabled={blockchainBalance < nextPickaxe.price || isBuying || balanceLoading}
                       >
                         {isBuying ? (
                           <>Purchasing...</>
-                        ) : gold >= nextPickaxe.price ? (
+                        ) : balanceLoading ? (
+                          <>Loading balance...</>
+                        ) : blockchainBalance >= nextPickaxe.price ? (
                           <>Purchase for {nextPickaxe.price}g</>
                         ) : (
-                          <>Not Enough Gold ({gold}/{nextPickaxe.price}g)</>
+                          <>Not Enough Gold ({blockchainBalance.toFixed(1)}/{nextPickaxe.price}g)</>
                         )}
                       </button>
                     </div>

@@ -54,6 +54,9 @@ export class MiningScene extends Phaser.Scene {
     // Setup level timer if applicable
     this.setupLevelTimer();
     
+    // Store reference in window for React components
+    (window as any).miningScene = this;
+    
     // Emit scene ready
     this.events.emit('scene-ready');
   }
@@ -325,6 +328,12 @@ export class MiningScene extends Phaser.Scene {
    * Update pickaxe tier (called externally when player upgrades)
    */
   public setPickaxeTier(pickaxe: PickaxeTier) {
+    // Guard check: ensure oreSpawner is initialized
+    if (!this.oreSpawner) {
+      console.warn('⚠️  Cannot set pickaxe tier: scene not fully initialized yet');
+      return;
+    }
+    
     this.oreSpawner.setPickaxe(pickaxe);
     
     console.log(`⛏️  Updated pickaxe to ${pickaxe}`);

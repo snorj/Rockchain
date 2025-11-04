@@ -8,6 +8,7 @@ import { LevelTimer } from '../UI/LevelTimer';
 import { LevelExpiryModal } from '../UI/LevelExpiryModal';
 import { ShopModal } from '../UI/ShopModal';
 import { formatNumber, getDynamicFontSize } from '../../utils/numberFormat';
+import { LEVELS } from '../../game/config/levels';
 import type { LevelId } from '../../game/config/levels';
 import type { PickaxeTier } from '../../game/config/pickaxes';
 import type { MiningScene } from '../../game/scenes/MiningScene';
@@ -72,10 +73,25 @@ export const GameUI: React.FC = () => {
       if (gameTier !== currentGamePickaxe) {
         useGameStore.getState().setPickaxe(gameTier);
         
-        // Update the Phaser scene as well
+        // Update the Phaser scene as well (wait for scene-ready if needed)
         const scene = getMiningScene();
         if (scene) {
           scene.setPickaxeTier(gameTier);
+        } else {
+          // If scene not ready yet, wait for scene-ready event
+          const waitForScene = () => {
+            const readyScene = getMiningScene();
+            if (readyScene) {
+              readyScene.setPickaxeTier(gameTier);
+              readyScene.events.off('scene-ready', waitForScene);
+            }
+          };
+          
+          // Try to attach listener if scene exists but not ready
+          const tempScene = (window as any).phaserGame?.scene?.getScene('MiningScene');
+          if (tempScene) {
+            tempScene.events.once('scene-ready', waitForScene);
+          }
         }
         
         console.log(`⛏️  Synced blockchain pickaxe: ${gameTier} (contract tier ${blockchainPickaxe.tier})`);
@@ -297,6 +313,7 @@ export const GameUI: React.FC = () => {
           onClose={handleReturnToLevel1}
           onReturnToLevel1={handleReturnToLevel1}
           onRenew={handleRenewLevel}
+          canAffordRenewal={gold >= LEVELS[expiredLevel].accessCost}
         />
       )}
     </div>

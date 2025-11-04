@@ -502,6 +502,115 @@
   background: rgba(255, 204, 0, 0.5);
 }
 
+/* Minutes Selector */
+.minutes-selector {
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 204, 0, 0.15);
+  border-radius: 8px;
+}
+
+.slider-container {
+  margin: 12px 0;
+}
+
+.minutes-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  -webkit-appearance: none;
+  margin: 8px 0;
+}
+
+.minutes-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffcc00;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.minutes-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.7);
+}
+
+.minutes-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffcc00;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.minutes-slider::-moz-range-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 12px rgba(255, 204, 0, 0.7);
+}
+
+.minutes-slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-top: 4px;
+}
+
+.quick-select-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.quick-select-buttons button {
+  flex: 1;
+  min-width: 50px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 204, 0, 0.3);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.quick-select-buttons button:hover:not(:disabled) {
+  background: rgba(255, 204, 0, 0.2);
+  border-color: #ffcc00;
+  color: #ffcc00;
+  transform: translateY(-1px);
+}
+
+.quick-select-buttons button.active {
+  background: #ffcc00;
+  border-color: #ffcc00;
+  color: #1a1a2e;
+  box-shadow: 0 0 8px rgba(255, 204, 0, 0.5);
+}
+
+.quick-select-buttons button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .modal-container {
@@ -519,6 +628,16 @@
   
   .step-connector {
     width: 40px;
+  }
+  
+  .quick-select-buttons {
+    gap: 6px;
+  }
+  
+  .quick-select-buttons button {
+    min-width: 40px;
+    padding: 6px 8px;
+    font-size: 11px;
   }
 }
 

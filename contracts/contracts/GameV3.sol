@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "./GoldToken.sol";
-import "./PickaxeNFT.sol";
+import "./PickaxeNFTV2.sol";
 import "./GemNFT.sol";
 
 /**
@@ -12,7 +12,7 @@ import "./GemNFT.sol";
  */
 contract GameV3 {
     GoldToken public immutable goldToken;
-    PickaxeNFT public immutable pickaxeNFT;
+    PickaxeNFTV2 public immutable pickaxeNFT;
     GemNFT public immutable gemNFT;
     
     // Ore type names (expanded to include all materials)
@@ -43,7 +43,7 @@ contract GameV3 {
     struct LevelConfig {
         string name;
         uint256 costPerMinute;     // Cost per minute in GLD (0 = free)
-        PickaxeNFT.Tier requiredTier;
+        PickaxeNFTV2.Tier requiredTier;
     }
     
     // Mining session
@@ -99,38 +99,38 @@ contract GameV3 {
         require(_gemNFT != address(0), "Invalid gem address");
         
         goldToken = GoldToken(_goldToken);
-        pickaxeNFT = PickaxeNFT(_pickaxeNFT);
+        pickaxeNFT = PickaxeNFTV2(_pickaxeNFT);
         gemNFT = GemNFT(_gemNFT);
         
         // Initialize level configurations with per-minute pricing
         levels[0] = LevelConfig({
             name: "Beginner Mine",
             costPerMinute: 0,  // FREE
-            requiredTier: PickaxeNFT.Tier.Wooden
+            requiredTier: PickaxeNFTV2.Tier.Wooden
         });
         
         levels[1] = LevelConfig({
             name: "Iron Mine",
             costPerMinute: 420,  // 420 gold/min
-            requiredTier: PickaxeNFT.Tier.Iron
+            requiredTier: PickaxeNFTV2.Tier.Iron
         });
         
         levels[2] = LevelConfig({
             name: "Precious Mine",
             costPerMinute: 2400,  // 2400 gold/min
-            requiredTier: PickaxeNFT.Tier.Steel
+            requiredTier: PickaxeNFTV2.Tier.Steel
         });
         
         levels[3] = LevelConfig({
             name: "Gem Cavern",
             costPerMinute: 6900,  // 6900 gold/min
-            requiredTier: PickaxeNFT.Tier.Mythril
+            requiredTier: PickaxeNFTV2.Tier.Mythril
         });
         
         levels[4] = LevelConfig({
             name: "Mythic Depths",
             costPerMinute: 18000,  // 18000 gold/min
-            requiredTier: PickaxeNFT.Tier.Adamantite
+            requiredTier: PickaxeNFTV2.Tier.Adamantite
         });
     }
     
@@ -148,7 +148,7 @@ contract GameV3 {
         LevelConfig memory config = levels[levelId];
         
         // Check pickaxe tier requirement
-        (, PickaxeNFT.Tier tier,,) = pickaxeNFT.getPlayerPickaxe(msg.sender);
+        (, PickaxeNFTV2.Tier tier,,) = pickaxeNFT.getPlayerPickaxe(msg.sender);
         require(tier >= config.requiredTier, "Pickaxe tier too low");
         
         // Calculate cost
@@ -255,7 +255,7 @@ contract GameV3 {
         }
         
         // Check pickaxe tier
-        (, PickaxeNFT.Tier tier,,) = pickaxeNFT.getPlayerPickaxe(player);
+        (, PickaxeNFTV2.Tier tier,,) = pickaxeNFT.getPlayerPickaxe(player);
         if (tier < levels[levelId].requiredTier) {
             return false;
         }

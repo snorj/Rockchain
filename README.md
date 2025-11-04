@@ -22,12 +22,12 @@ Players mine ores across 5 mining levels, collect 26 different materials, upgrad
 5. **Upgrade** - Buy better pickaxes (1x → 6x damage)
 6. **Progress** - Unlock 5 mining levels with rarer materials
 
-### 5-Level Progression System
+### 5-Level Progression System (Per-Minute Pricing)
 - **Level 1** (Beginner Mine) - Free, unlimited - Stone, Copper, Tin, Coal
-- **Level 2** (Iron Mine) - 50g, 2 min - Iron, Lead, Cobalt
-- **Level 3** (Precious Mine) - 200g, 2 min - Silver, Gold, Platinum, Emerald
-- **Level 4** (Gem Cavern) - 500g, 2 min - Palladium, Ruby, Sapphire
-- **Level 5** (Mythic Depths) - 1500g, 2 min - Mythril, Adamantite, Diamond
+- **Level 2** (Iron Mine) - 420g/min - Iron, Lead, Cobalt
+- **Level 3** (Precious Mine) - 2400g/min - Silver, Gold, Platinum, Emerald
+- **Level 4** (Gem Cavern) - 6900g/min - Palladium, Ruby, Sapphire
+- **Level 5** (Mythic Depths) - 18000g/min - Mythril, Adamantite, Diamond
 
 ### 26 Materials
 - **18 Ores**: Stone → Copper → Iron → Silver → Gold → Platinum → Mythril → Adamantite
@@ -121,10 +121,10 @@ The game will start at `http://localhost:5173`
 - **Hardhat** - Contract development
 
 ### Smart Contracts (Sepolia)
-- **GoldToken** (ERC-20) - `0xBc0E7e2E4FAf207993adF7f6A7c5E4606719f527`
-- **PickaxeNFT** (ERC-721) - `0xDb2030F78d940F0057d2f6B877957BF68213D0D9`
-- **GemNFT** (ERC-721) - `0x25FaD2bA87BdCD9E41fCa42b45c7a573506bFb73`
-- **GameV2** - `0xCB76BE68716D220D812fDDdD3465057cA4a14D4F` ⭐ **NEW**
+- **GoldToken** (ERC-20) - `0x6c4D595713e272C4dE42bfBEbA4717896651D336`
+- **PickaxeNFTV2** (ERC-721) - `0x6a2b4e521c0AFbd11DeF5858760C32231810220E`
+- **GemNFT** (ERC-721) - `0x66ed8a577C21fC186273114C5Ebe447990B053B3`
+- **GameV3** - `0x1B0aF9c6B419e4Fa9c3491865a79B082add6282c` ⭐ **Per-Minute Pricing**
 
 ### Assets
 - **Hana Caraka - Dungeon & Mining** by Otterisk
@@ -156,11 +156,11 @@ rockchain/
 │
 ├── contracts/             # Solidity smart contracts
 │   ├── contracts/
-│   │   ├── GameV2.sol     # Main game logic with levels
-│   │   ├── GoldToken.sol  # ERC-20 currency
-│   │   ├── PickaxeNFT.sol # ERC-721 tools
-│   │   └── GemNFT.sol     # ERC-721 collectibles
-│   └── scripts/           # Deployment scripts
+│   │   ├── GameV3.sol        # Main game logic (per-minute pricing)
+│   │   ├── GoldToken.sol     # ERC-20 currency
+│   │   ├── PickaxeNFTV2.sol  # ERC-721 tools (updated pricing)
+│   │   └── GemNFT.sol        # ERC-721 collectibles
+│   └── scripts/              # Deployment scripts
 │
 └── docs/                  # Documentation
     ├── GAME_REDESIGN_COMPLETE.md

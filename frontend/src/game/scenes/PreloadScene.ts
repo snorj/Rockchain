@@ -54,12 +54,9 @@ export class PreloadScene extends Phaser.Scene {
           this.load.image(key, path);
         });
       } else {
-        // Other materials use tiles 05-08
+        // Other materials use tiles 05-08 (all materials use 2-digit naming)
         for (let i = 5; i <= 8; i++) {
-          // Gold uses 3-digit tile names (tile005, tile006, etc.)
-          const tileNum = material === 'gold' 
-            ? i.toString().padStart(3, '0') 
-            : i.toString().padStart(2, '0');
+          const tileNum = i.toString().padStart(2, '0');
           const key = `${material}-rock-${i}`;
           const path = `${basePath}/tile${tileNum}.png`;
           
@@ -71,10 +68,7 @@ export class PreloadScene extends Phaser.Scene {
       const objectKey = `${material}-object`;
       const objectPath = `${basePath}/tile09.png`;
       
-      // Special case for gold which uses tile009 instead of tile09
-      const goldPath = material === 'gold' ? `${basePath}/tile009.png` : objectPath;
-      
-      this.load.image(objectKey, material === 'gold' ? goldPath : objectPath);
+      this.load.image(objectKey, objectPath);
     });
   }
 

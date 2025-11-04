@@ -4,7 +4,7 @@ import { InventoryPanel } from '../UI/InventoryPanel';
 import { WalletButton } from '../Web3/WalletButton';
 import { InventoryControls } from '../UI/InventoryControls';
 import { LevelSelectorWrapper } from '../UI/LevelSelectorWrapper';
-import { GOLD_TOKEN_ADDRESS, GAME_V2_ADDRESS } from '../../blockchain/config/contracts';
+import { GOLD_TOKEN_ADDRESS, GAME_ADDRESS } from '../../blockchain/config/contracts';
 import './GameLayout.css';
 
 /**
@@ -55,12 +55,12 @@ export const GameLayout = () => {
           <div className="contract-address">
             <span className="contract-label">Game Contract:</span>
             <a 
-              href={`https://sepolia.etherscan.io/address/${GAME_V2_ADDRESS}`}
+              href={`https://sepolia.etherscan.io/address/${GAME_ADDRESS}`}
               target="_blank"
               rel="noopener noreferrer"
               className="contract-link"
             >
-              {GAME_V2_ADDRESS}
+              {GAME_ADDRESS}
             </a>
           </div>
         </div>

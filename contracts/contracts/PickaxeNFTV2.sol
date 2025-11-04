@@ -22,7 +22,7 @@ contract PickaxeNFTV2 is ERC721, Ownable {
     }
     
     GoldToken public goldToken;
-    address public gameContract; // Game.sol can call useDurability
+    address public gameContract; // GameV3.sol can call useDurability
     uint256 private _nextTokenId = 1;
     
     mapping(uint256 => Pickaxe) public pickaxes;
@@ -60,7 +60,7 @@ contract PickaxeNFTV2 is ERC721, Ownable {
     
     /**
      * @notice Set game contract address (only callable by owner)
-     * @param _gameContract Address of Game.sol
+     * @param _gameContract Address of GameV3.sol
      */
     function setGameContract(address _gameContract) external onlyOwner {
         require(_gameContract != address(0), "Invalid game contract");
@@ -111,7 +111,7 @@ contract PickaxeNFTV2 is ERC721, Ownable {
     }
     
     /**
-     * @notice Reduce durability (called by Game.sol after mining)
+     * @notice Reduce durability (called by GameV3.sol after mining)
      * @param tokenId Token ID to reduce durability for
      */
     function useDurability(uint256 tokenId) external {

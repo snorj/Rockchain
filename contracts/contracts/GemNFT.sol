@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 /**
  * @title GemNFT
  * @notice ERC-721 NFTs representing rare gem collectibles
- * @dev Minted by Game.sol when players mine legendary ores (0.5% drop chance)
+ * @dev Minted by GameV3.sol when players mine legendary ores (0.5% drop chance)
  */
 contract GemNFT is ERC721, Ownable {
     enum GemType { Ruby, Sapphire, Emerald, Diamond, Topaz, Amethyst, Aquamarine, Peridot }
@@ -18,7 +18,7 @@ contract GemNFT is ERC721, Ownable {
         string oreSource; // Which ore it dropped from (e.g., "adamantite")
     }
     
-    address public gameContract; // Only Game.sol can mint
+    address public gameContract; // Only GameV3.sol can mint
     uint256 private _nextTokenId = 1;
     
     mapping(uint256 => Gem) public gems;
@@ -30,7 +30,7 @@ contract GemNFT is ERC721, Ownable {
     
     /**
      * @notice Set game contract address (only callable by owner)
-     * @param _gameContract Address of Game.sol
+     * @param _gameContract Address of GameV3.sol
      */
     function setGameContract(address _gameContract) external onlyOwner {
         require(_gameContract != address(0), "Invalid game contract");
@@ -38,7 +38,7 @@ contract GemNFT is ERC721, Ownable {
     }
     
     /**
-     * @notice Mint gem (called by Game.sol on rare drop)
+     * @notice Mint gem (called by GameV3.sol on rare drop)
      * @param to Player who mined the ore
      * @param gemType Type of gem to mint
      * @param oreSource Which legendary ore it dropped from

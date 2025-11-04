@@ -28,6 +28,12 @@ export const InventoryPanel: React.FC = () => {
       return a.config.goldValue - b.config.goldValue;
     });
   
+  // Calculate total inventory value
+  const totalValue = inventoryItems.reduce(
+    (sum, { count, config }) => sum + (count * config.goldValue),
+    0
+  );
+  
   if (inventoryItems.length === 0) {
     return (
       <div className="inventory-panel-minimal">
@@ -96,6 +102,19 @@ export const InventoryPanel: React.FC = () => {
             )}
           </div>
         ))}
+      </div>
+      
+      {/* Total Inventory Value */}
+      <div className="inventory-total-value">
+        <span className="total-label">Total Value:</span>
+        <div className="total-amount">
+          <img 
+            src="/assets/sprites/ores/gold/tile04.png" 
+            alt="Gold" 
+            className="gold-icon"
+          />
+          <span className="total-number">{totalValue.toLocaleString()}</span>
+        </div>
       </div>
     </div>
   );

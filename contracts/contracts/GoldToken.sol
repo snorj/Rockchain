@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 /**
  * @title GoldToken
  * @notice ERC-20 token representing gold earned in Rockchain
- * @dev Only the Game contract can mint tokens
+ * @dev Only the GameV3 contract can mint tokens
  */
 contract GoldToken is ERC20, AccessControl {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
@@ -20,7 +20,7 @@ contract GoldToken is ERC20, AccessControl {
     
     /**
      * @notice Grant minter role to Game contract
-     * @param minter Address of Game.sol
+     * @param minter Address of GameV3.sol
      */
     function setMinter(address minter) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _grantRole(MINTER_ROLE, minter);

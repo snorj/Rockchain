@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth';
 import { encodeFunctionData } from 'viem';
-import { GAME_V2_ABI, GAME_V2_ADDRESS } from '../config/contracts';
+import { GAME_ABI, GAME_ADDRESS } from '../config/contracts';
 import type { MaterialType } from '../../game/config/materials';
 import { MATERIALS } from '../../game/config/materials';
 
 /**
  * Hook for selling mined resources and minting GLD tokens
- * Updated for GameV2 with expanded material system
+ * Updated for GameV3 with expanded material system
  */
 export const useSellResourcesV2 = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +66,7 @@ export const useSellResourcesV2 = () => {
 
       // Encode the contract call data
       const data = encodeFunctionData({
-        abi: GAME_V2_ABI,
+        abi: GAME_ABI,
         functionName: 'sellResources',
         args: [materialIds, amounts],
       });
@@ -76,7 +76,7 @@ export const useSellResourcesV2 = () => {
       // Use Privy's useSendTransaction with native gas sponsorship
       const txReceipt = await sendTransaction(
         {
-          to: GAME_V2_ADDRESS,
+          to: GAME_ADDRESS,
           data: data,
           value: 0,
         },
@@ -90,6 +90,11 @@ export const useSellResourcesV2 = () => {
 
       console.log('✅ Transaction successful:', txReceipt);
       console.log(`🔗 View on Etherscan: https://sepolia.etherscan.io/tx/${txReceipt.hash}`);
+      
+      // Check if transaction was successful (status = 1)
+      if (txReceipt.status === 0) {
+        throw new Error('Transaction failed on-chain. This may mean GameV3 lacks minting permissions. Check the transaction on Etherscan.');
+      }
 
       return {
         txHash: txReceipt.hash,
@@ -109,7 +114,7 @@ export const useSellResourcesV2 = () => {
 };
 
 /**
- * Get material ID for contract (matches materialNames array in GameV2.sol)
+ * Get material ID for contract (matches materialNames array in GameV3.sol)
  */
 function getMaterialId(material: MaterialType): number {
   const materialMap: Record<MaterialType, number> = {

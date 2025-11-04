@@ -89,11 +89,11 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
     }
   };
   
-  const handlePurchaseConfirm = async () => {
+  const handlePurchaseConfirm = async (numMinutes: number) => {
     if (!selectedLevel) return;
     
     try {
-      const result = await purchaseLevelAccess(selectedLevel);
+      const result = await purchaseLevelAccess(selectedLevel, numMinutes);
       onPurchaseSuccess(selectedLevel, result.expiryTime);
       setShowPurchaseModal(false);
       setIsExpanded(false);

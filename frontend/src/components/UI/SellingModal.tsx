@@ -42,6 +42,9 @@ export const SellingModal: React.FC<SellingModalProps> = ({
             <div className="success-icon">✓</div>
             <h3>Sale Successful!</h3>
             <p className="gold-earned">You earned <strong>{goldEarned}g</strong></p>
+            <p className="selling-hint" style={{ color: '#ff9800', marginTop: '10px' }}>
+              ⏱️ Wait 5-10 seconds for your balance to sync before making purchases.
+            </p>
             <button className="btn-primary" onClick={onClose}>
               Close
             </button>

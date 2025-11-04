@@ -7,7 +7,7 @@ import './LevelPurchaseModal.css';
 interface LevelPurchaseModalProps {
   levelId: LevelId;
   currentGold: number;
-  onConfirm: () => Promise<void>;
+  onConfirm: (numMinutes: number) => Promise<void>;
   onCancel: () => void;
   isProcessing: boolean;
 }
@@ -27,19 +27,22 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
 }) => {
   const [purchaseState, setPurchaseState] = useState<PurchaseState>('confirm');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [minutes, setMinutes] = useState<number>(10); // Default to 10 minutes
   
   const level = LEVELS[levelId];
   // Per-minute pricing: accessCost is the cost per minute, accessDuration is 60 (1 minute blocks)
-  const minutes = 1; // Start with 1 minute
   const costPerMinute = level.accessCost;
   const totalCost = costPerMinute * minutes;
   const goldAfterPurchase = currentGold - totalCost;
   const canAfford = currentGold >= totalCost;
   
+  // Calculate max affordable minutes
+  const maxAffordableMinutes = Math.min(60, Math.floor(currentGold / costPerMinute));
+  
   const handleConfirm = async () => {
     try {
       setPurchaseState('approving');
-      await onConfirm();
+      await onConfirm(minutes);
       setPurchaseState('success');
       
       // Auto-close after success
@@ -49,6 +52,11 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
       setPurchaseState('error');
       setErrorMessage(error.message || 'Transaction failed. Please try again.');
     }
+  };
+  
+  const handleMinutesChange = (value: number) => {
+    const clamped = Math.max(1, Math.min(60, value));
+    setMinutes(clamped);
   };
   
   // Render different content based on state
@@ -83,9 +91,63 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
                   <span className="detail-value highlight">{costPerMinute} GLD/minute</span>
                 </div>
                 
-                <div className="detail-row">
-                  <span className="detail-label">⏰ Duration:</span>
-                  <span className="detail-value highlight">{minutes} minute</span>
+                <div className="minutes-selector">
+                  <div className="detail-row">
+                    <span className="detail-label">⏰ Duration:</span>
+                    <span className="detail-value highlight">{minutes} minute{minutes > 1 ? 's' : ''}</span>
+                  </div>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      min="1"
+                      max={Math.min(60, maxAffordableMinutes)}
+                      value={minutes}
+                      onChange={(e) => handleMinutesChange(parseInt(e.target.value))}
+                      className="minutes-slider"
+                      disabled={maxAffordableMinutes < 1}
+                    />
+                    <div className="slider-labels">
+                      <span>1 min</span>
+                      <span>{Math.min(60, maxAffordableMinutes)} min</span>
+                    </div>
+                  </div>
+                  <div className="quick-select-buttons">
+                    <button 
+                      onClick={() => handleMinutesChange(1)} 
+                      className={minutes === 1 ? 'active' : ''}
+                      disabled={maxAffordableMinutes < 1}
+                    >
+                      1m
+                    </button>
+                    <button 
+                      onClick={() => handleMinutesChange(5)} 
+                      className={minutes === 5 ? 'active' : ''}
+                      disabled={maxAffordableMinutes < 5}
+                    >
+                      5m
+                    </button>
+                    <button 
+                      onClick={() => handleMinutesChange(10)} 
+                      className={minutes === 10 ? 'active' : ''}
+                      disabled={maxAffordableMinutes < 10}
+                    >
+                      10m
+                    </button>
+                    <button 
+                      onClick={() => handleMinutesChange(30)} 
+                      className={minutes === 30 ? 'active' : ''}
+                      disabled={maxAffordableMinutes < 30}
+                    >
+                      30m
+                    </button>
+                    <button 
+                      onClick={() => handleMinutesChange(60)} 
+                      className={minutes === 60 ? 'active' : ''}
+                      disabled={maxAffordableMinutes < 60}
+                    >
+                      60m
+                    </button>
+                  </div>
                 </div>
                 
                 <div className="detail-row">
@@ -127,11 +189,11 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
               <div className="info-box">
                 <p><strong>How it works:</strong></p>
                 <ul>
-                  <li>Pay {totalCost} GLD for {minutes} minute of mining</li>
+                  <li>Pay {totalCost} GLD for {minutes} minute{minutes > 1 ? 's' : ''} of mining</li>
                   <li>Session timer starts immediately</li>
                   <li>Mine as much as you can within the time</li>
                   <li>Return to Level 1 when time expires</li>
-                  <li>Break-even rate: ~1 ore per second</li>
+                  <li>Select more minutes to maximize your profit potential</li>
                 </ul>
               </div>
             </div>
