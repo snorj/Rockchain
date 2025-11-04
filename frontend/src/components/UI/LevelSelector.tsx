@@ -30,7 +30,7 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
   const currentLevel = useGameStore(state => state.currentLevel);
   const levelExpiry = useGameStore(state => state.levelExpiry);
   
-  const { purchaseLevelAccess, isPurchasing, getTimeRemaining } = useLevelAccess(embeddedWallet?.address);
+  const { approveMiningSession, startMiningSession, isPurchasing, getTimeRemaining } = useLevelAccess(embeddedWallet?.address);
   
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -83,17 +83,46 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
       onLevelChange(levelId);
       setIsExpanded(false);
     } else {
+      // Check if player already has an active session (can't start a new one while one is active)
+      if (levelExpiry && levelExpiry > Date.now()) {
+        const remainingTime = Math.floor((levelExpiry - Date.now()) / 1000);
+        const mins = Math.floor(remainingTime / 60);
+        const secs = remainingTime % 60;
+        const timeStr = mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+        
+        if (currentLevel === levelId) {
+          // Trying to extend the same level
+          alert(`You already have an active session at ${level.name} (${timeStr} remaining). Please wait for it to expire before starting a new session.`);
+        } else {
+          // Trying to switch to a different level
+          alert(`You already have an active session at ${LEVELS[currentLevel].name} (${timeStr} remaining). Please wait for it to expire first.`);
+        }
+        return;
+      }
+      
       // Paid level - show purchase modal
       setSelectedLevel(levelId);
       setShowPurchaseModal(true);
     }
   };
   
-  const handlePurchaseConfirm = async (numMinutes: number) => {
+  const handleApprove = async (numSeconds: number) => {
     if (!selectedLevel) return;
     
     try {
-      const result = await purchaseLevelAccess(selectedLevel, numMinutes);
+      await approveMiningSession(selectedLevel, numSeconds);
+      // Approval succeeded - modal will show "Start" button
+    } catch (error: any) {
+      // Error is handled by modal
+      throw error;
+    }
+  };
+  
+  const handleStart = async (numSeconds: number) => {
+    if (!selectedLevel) return;
+    
+    try {
+      const result = await startMiningSession(selectedLevel, numSeconds);
       onPurchaseSuccess(selectedLevel, result.expiryTime);
       setShowPurchaseModal(false);
       setIsExpanded(false);
@@ -128,12 +157,14 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
             const canAfford = gold >= level.accessCost;
             const isCurrent = level.id === currentLevel;
             const isLocked = !hasPickaxe;
+            const hasActiveSession = levelExpiry && levelExpiry > Date.now();
+            const isSessionBlocked = level.accessCost > 0 && hasActiveSession && !isCurrent;
             
             return (
               <div
                 key={level.id}
-                className={`level-option ${isCurrent ? 'current' : ''} ${isLocked ? 'locked' : ''}`}
-                onClick={() => !isLocked && !isCurrent && handleLevelSelect(level.id)}
+                className={`level-option ${isCurrent ? 'current' : ''} ${isLocked ? 'locked' : ''} ${isSessionBlocked ? 'session-blocked' : ''}`}
+                onClick={() => !isLocked && !isCurrent && !isSessionBlocked && handleLevelSelect(level.id)}
                 style={{ borderLeftColor: level.backgroundColor }}
               >
                 <div className="level-option-header">
@@ -166,7 +197,7 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
                   {level.accessCost > 0 && (
                     <div className="requirement">
                       <span className={canAfford ? 'req-met' : 'req-unmet'}>
-                        {level.accessCost}g ({level.accessDuration / 60} min)
+                        {level.accessCost}g/sec
                       </span>
                     </div>
                   )}
@@ -193,7 +224,8 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
         <LevelPurchaseModal
           levelId={selectedLevel}
           currentGold={gold}
-          onConfirm={handlePurchaseConfirm}
+          onApprove={handleApprove}
+          onStart={handleStart}
           onCancel={handlePurchaseCancel}
           isProcessing={isPurchasing}
         />

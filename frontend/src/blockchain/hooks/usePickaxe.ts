@@ -172,21 +172,34 @@ export const usePickaxe = (address?: string) => {
         args: [PICKAXE_NFT_ADDRESS, costWei],
       });
 
-      const approveReceipt = await sendTransaction(
-        {
-          to: GOLD_TOKEN_ADDRESS,
-          data: approveData,
-          value: 0,
-        },
-        {
-          sponsor: true,
-          header: 'Approve GLD',
-          description: `Approve ${cost} GLD for pickaxe purchase`,
-          buttonText: 'Approve'
-        }
-      );
+      let approveReceipt;
+      try {
+        approveReceipt = await sendTransaction(
+          {
+            to: GOLD_TOKEN_ADDRESS,
+            data: approveData,
+            value: 0,
+          },
+          {
+            sponsor: true,
+            header: 'Approve GLD',
+            description: `Approve ${cost} GLD for pickaxe purchase`,
+            buttonText: 'Approve'
+          }
+        );
 
-      console.log('✅ GLD approved:', approveReceipt.hash);
+        console.log('✅ GLD approved:', approveReceipt.hash);
+      } catch (approveError: any) {
+        // Check if this is an AbortError - the approval may have succeeded
+        if (approveError.name === 'AbortError' || approveError.message?.includes('abort')) {
+          console.log('⚠️  Approval transaction may have succeeded despite abort error, continuing...');
+          // Wait a bit and continue to the buy transaction
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } else {
+          // If it's a real error, throw it
+          throw approveError;
+        }
+      }
 
       // Then, buy pickaxe
       console.log(`🔨 Buying ${tierName} pickaxe...`);
@@ -220,6 +233,31 @@ export const usePickaxe = (address?: string) => {
       return buyReceipt.hash;
     } catch (error: any) {
       console.error('❌ Failed to buy pickaxe:', error);
+      
+      // Check if this is an AbortError that occurred after the transaction succeeded
+      // This can happen if the transaction completes but monitoring is aborted
+      if (error.name === 'AbortError' || error.message?.includes('abort')) {
+        console.log('⚠️  Transaction may have succeeded despite abort error, checking...');
+        
+        // Wait a bit for blockchain state to update
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Refresh and check if we now have the pickaxe
+        await fetchPickaxe();
+        
+        // If we successfully got the pickaxe, don't throw the error
+        const hasPickaxeNow = await publicClient.readContract({
+          address: PICKAXE_NFT_ADDRESS,
+          abi: PICKAXE_NFT_ABI,
+          functionName: 'hasPickaxe',
+          args: [address],
+        }) as boolean;
+        
+        if (hasPickaxeNow) {
+          console.log('✅ Pickaxe purchase succeeded despite abort error!');
+          return undefined; // Transaction succeeded, no hash available
+        }
+      }
       
       // Enhance error message for better debugging
       if (error.message) {
@@ -257,21 +295,34 @@ export const usePickaxe = (address?: string) => {
         args: [PICKAXE_NFT_ADDRESS, costWei],
       });
 
-      const approveReceipt = await sendTransaction(
-        {
-          to: GOLD_TOKEN_ADDRESS,
-          data: approveData,
-          value: 0,
-        },
-        {
-          sponsor: true,
-          header: 'Approve GLD',
-          description: `Approve ${repairCost} GLD for pickaxe repair`,
-          buttonText: 'Approve'
-        }
-      );
+      let approveReceipt;
+      try {
+        approveReceipt = await sendTransaction(
+          {
+            to: GOLD_TOKEN_ADDRESS,
+            data: approveData,
+            value: 0,
+          },
+          {
+            sponsor: true,
+            header: 'Approve GLD',
+            description: `Approve ${repairCost} GLD for pickaxe repair`,
+            buttonText: 'Approve'
+          }
+        );
 
-      console.log('✅ GLD approved:', approveReceipt.hash);
+        console.log('✅ GLD approved:', approveReceipt.hash);
+      } catch (approveError: any) {
+        // Check if this is an AbortError - the approval may have succeeded
+        if (approveError.name === 'AbortError' || approveError.message?.includes('abort')) {
+          console.log('⚠️  Approval transaction may have succeeded despite abort error, continuing...');
+          // Wait a bit and continue to the repair transaction
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        } else {
+          // If it's a real error, throw it
+          throw approveError;
+        }
+      }
 
       // Then, repair pickaxe
       console.log('🔧 Repairing pickaxe...');
@@ -303,8 +354,26 @@ export const usePickaxe = (address?: string) => {
       await fetchPickaxe();
 
       return repairReceipt.hash;
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to repair pickaxe:', error);
+      
+      // Check if this is an AbortError that occurred after the transaction succeeded
+      if (error.name === 'AbortError' || error.message?.includes('abort')) {
+        console.log('⚠️  Transaction may have succeeded despite abort error, checking...');
+        
+        // Wait a bit for blockchain state to update
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Refresh pickaxe data
+        await fetchPickaxe();
+        
+        // If repair succeeded, pickaxe should have full durability
+        if (pickaxe && pickaxe.durability === pickaxe.maxDurability) {
+          console.log('✅ Pickaxe repair succeeded despite abort error!');
+          return undefined; // Transaction succeeded, no hash available
+        }
+      }
+      
       throw error;
     } finally {
       setIsRepairing(false);

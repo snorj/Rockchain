@@ -18,8 +18,8 @@ export interface LevelConfig {
   name: string;
   description: string;
   requiredPickaxe: PickaxeTier;
-  accessCost: number;           // Cost in gold to access (0 = free)
-  accessDuration: number;       // Duration in seconds (0 = unlimited)
+  accessCost: number;           // Cost per second in gold (0 = free)
+  accessDuration: number;       // Not used anymore - purchasing by seconds
   spawns: MaterialSpawn[];      // What materials can spawn
   backgroundColor: string;      // Gradient color for this level
 }
@@ -49,8 +49,8 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     name: 'Stone Mine',
     description: 'Deeper tunnels rich with common metals.',
     requiredPickaxe: 'stone',
-    accessCost: 420,      // Per minute cost
-    accessDuration: 60,   // 1 minute blocks
+    accessCost: 7,        // Per second cost (420/min)
+    accessDuration: 60,   // Not used - flexible purchasing
     backgroundColor: '#1a1a1a',
     spawns: [
       { material: 'stone', weight: 10 },
@@ -68,8 +68,8 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     name: 'Precious Mine',
     description: 'Ancient veins of valuable metals and the first gems.',
     requiredPickaxe: 'steel',
-    accessCost: 2400,     // Per minute cost
-    accessDuration: 60,   // 1 minute blocks
+    accessCost: 40,       // Per second cost (2400/min)
+    accessDuration: 60,   // Not used - flexible purchasing
     backgroundColor: '#1a1526',
     spawns: [
       { material: 'iron', weight: 10 },
@@ -87,8 +87,8 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     name: 'Gem Cavern',
     description: 'Crystalline caves filled with precious gems and rare metals.',
     requiredPickaxe: 'mythril',
-    accessCost: 6900,     // Per minute cost
-    accessDuration: 60,   // 1 minute blocks
+    accessCost: 115,      // Per second cost (6900/min)
+    accessDuration: 60,   // Not used - flexible purchasing
     backgroundColor: '#1a0d26',
     spawns: [
       { material: 'silver', weight: 5 },
@@ -109,8 +109,8 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
     name: 'Mythic Depths',
     description: 'The deepest reaches where legendary materials form.',
     requiredPickaxe: 'adamantite',
-    accessCost: 18000,    // Per minute cost
-    accessDuration: 60,   // 1 minute blocks
+    accessCost: 300,      // Per second cost (18000/min)
+    accessDuration: 60,   // Not used - flexible purchasing
     backgroundColor: '#0d0d1a',
     spawns: [
       { material: 'platinum', weight: 5 },

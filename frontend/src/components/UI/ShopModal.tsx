@@ -105,9 +105,9 @@ export const ShopModal: React.FC<ShopModalProps> = ({
       
       console.log(`✅ Successfully purchased ${pickaxeConfig.name} on blockchain`);
       
-      // Update local game state
+      // Update local game state (pickaxe only)
+      // Note: Balance will sync automatically from blockchain via useGoldBalance hook
       onPickaxePurchased(pickaxe);
-      useGameStore.getState().removeGold(pickaxeConfig.price);
       
       setPurchasingSuccess(true);
     } catch (error: any) {
@@ -179,10 +179,24 @@ export const ShopModal: React.FC<ShopModalProps> = ({
     }
   };
   
+  const handleOverlayClick = () => {
+    // Don't allow closing while processing transactions
+    if (!isSelling && !isBuying) {
+      onClose();
+    }
+  };
+  
+  const handleCloseButton = () => {
+    // Don't allow closing while processing transactions
+    if (!isSelling && !isBuying) {
+      onClose();
+    }
+  };
+  
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content shop-modal" onClick={e => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>✕</button>
+        <button className="modal-close" onClick={handleCloseButton}>✕</button>
         
         <h2 className="modal-title">Shop</h2>
         

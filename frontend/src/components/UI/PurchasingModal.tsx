@@ -25,8 +25,15 @@ export const PurchasingModal: React.FC<PurchasingModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
+  const handleOverlayClick = () => {
+    // Don't allow closing while processing
+    if (!isProcessing) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay selling-modal-overlay">
+    <div className="modal-overlay selling-modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content selling-modal" onClick={e => e.stopPropagation()}>
         {isProcessing && (
           <div className="selling-state processing">

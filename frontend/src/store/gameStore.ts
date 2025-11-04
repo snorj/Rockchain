@@ -47,8 +47,6 @@ export interface GameState {
   clearInventory: () => void;
   
   setGold: (amount: number) => void;
-  addGold: (amount: number) => void;
-  removeGold: (amount: number) => void;
   
   setPickaxe: (pickaxe: PickaxeTier) => void;
   setLevel: (level: LevelId, expiryTimestamp?: number) => void;
@@ -120,26 +118,10 @@ export const useGameStore = create<GameState>((set, get) => ({
   },
   
   /**
-   * Set gold amount (absolute)
+   * Set gold amount (absolute) - Only used for syncing from blockchain
    */
   setGold: (amount: number) => {
     set({ gold: Math.max(0, amount) });
-  },
-  
-  /**
-   * Add gold
-   */
-  addGold: (amount: number) => {
-    set((state) => ({ gold: state.gold + amount }));
-    console.log(`💰 Added ${amount} gold`);
-  },
-  
-  /**
-   * Remove gold
-   */
-  removeGold: (amount: number) => {
-    set((state) => ({ gold: Math.max(0, state.gold - amount) }));
-    console.log(`💸 Spent ${amount} gold`);
   },
   
   /**

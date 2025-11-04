@@ -151,7 +151,7 @@
   transition: all 0.2s ease;
 }
 
-.level-option:hover:not(.current):not(.locked) {
+.level-option:hover:not(.current):not(.locked):not(.session-blocked) {
   background: rgba(255, 255, 255, 0.1);
   border-color: #777;
   transform: translateX(4px);
@@ -166,6 +166,17 @@
 .level-option.locked {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.level-option.session-blocked {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(255, 152, 0, 0.05);
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+.level-option.session-blocked:hover {
+  transform: none;
 }
 
 .level-option-header {

@@ -46,7 +46,6 @@ export const LevelTimer: React.FC = () => {
   
   return (
     <div className={`level-timer-display ${timeRemaining < 30 ? 'warning' : ''}`}>
-      <span className="timer-icon">⏰</span>
       <span className="timer-text">{formatTimeRemaining(timeRemaining)}</span>
     </div>
   );

@@ -7,8 +7,8 @@ import "./GemNFT.sol";
 
 /**
  * @title GameV3
- * @notice Core Rockchain game logic with per-minute level pricing
- * @dev Implements session-based mining with prepaid minute blocks
+ * @notice Core Rockchain game logic with per-second level pricing
+ * @dev Implements session-based mining with flexible second-based purchases
  */
 contract GameV3 {
     GoldToken public immutable goldToken;
@@ -42,7 +42,7 @@ contract GameV3 {
     // Level configuration
     struct LevelConfig {
         string name;
-        uint256 costPerMinute;     // Cost per minute in GLD (0 = free)
+        uint256 costPerSecond;     // Cost per second in GLD (0 = free)
         PickaxeNFTV2.Tier requiredTier;
     }
     
@@ -75,7 +75,7 @@ contract GameV3 {
     event SessionStarted(
         address indexed player,
         uint8 indexed levelId,
-        uint8 numMinutes,
+        uint16 numSeconds,
         uint256 cost,
         uint256 startTime,
         uint256 endTime
@@ -102,48 +102,56 @@ contract GameV3 {
         pickaxeNFT = PickaxeNFTV2(_pickaxeNFT);
         gemNFT = GemNFT(_gemNFT);
         
-        // Initialize level configurations with per-minute pricing
+        // Initialize level configurations with per-second pricing
         levels[0] = LevelConfig({
             name: "Beginner Mine",
-            costPerMinute: 0,  // FREE
+            costPerSecond: 0,  // FREE
             requiredTier: PickaxeNFTV2.Tier.Wooden
         });
         
         levels[1] = LevelConfig({
             name: "Iron Mine",
-            costPerMinute: 420,  // 420 gold/min
+            costPerSecond: 7,  // 7 gold/sec (420/min)
             requiredTier: PickaxeNFTV2.Tier.Iron
         });
         
         levels[2] = LevelConfig({
             name: "Precious Mine",
-            costPerMinute: 2400,  // 2400 gold/min
+            costPerSecond: 40,  // 40 gold/sec (2400/min)
             requiredTier: PickaxeNFTV2.Tier.Steel
         });
         
         levels[3] = LevelConfig({
             name: "Gem Cavern",
-            costPerMinute: 6900,  // 6900 gold/min
+            costPerSecond: 115,  // 115 gold/sec (6900/min)
             requiredTier: PickaxeNFTV2.Tier.Mythril
         });
         
         levels[4] = LevelConfig({
             name: "Mythic Depths",
-            costPerMinute: 18000,  // 18000 gold/min
+            costPerSecond: 300,  // 300 gold/sec (18000/min)
             requiredTier: PickaxeNFTV2.Tier.Adamantite
         });
     }
     
     /**
-     * @notice Start a mining session with prepaid minute blocks
+     * @notice Start a mining session with flexible second-based purchases
      * @param levelId Level ID (1-4, level 0 is always free and doesn't need sessions)
-     * @param numMinutes Number of minutes to purchase (1-60)
+     * @param numSeconds Number of seconds to purchase (15-3600, i.e., 15 seconds to 60 minutes)
      */
-    function startMiningSession(uint8 levelId, uint8 numMinutes) external {
+    function startMiningSession(uint8 levelId, uint16 numSeconds) external {
         require(levelId > 0 && levelId < 5, "Invalid level");
-        require(numMinutes > 0 && numMinutes <= 60, "Minutes must be 1-60");
+        require(numSeconds >= 15 && numSeconds <= 3600, "Seconds must be 15-3600");
         require(pickaxeNFT.hasPickaxe(msg.sender), "No pickaxe");
-        require(!activeSessions[msg.sender].active, "Session already active");
+        
+        // Check if there's an active session that hasn't expired
+        MiningSession storage currentSession = activeSessions[msg.sender];
+        require(!currentSession.active || block.timestamp >= currentSession.endTime, "Session already active");
+        
+        // If old session exists and is expired, mark it as inactive
+        if (currentSession.active && block.timestamp >= currentSession.endTime) {
+            currentSession.active = false;
+        }
         
         LevelConfig memory config = levels[levelId];
         
@@ -151,8 +159,8 @@ contract GameV3 {
         (, PickaxeNFTV2.Tier tier,,) = pickaxeNFT.getPlayerPickaxe(msg.sender);
         require(tier >= config.requiredTier, "Pickaxe tier too low");
         
-        // Calculate cost
-        uint256 totalCost = config.costPerMinute * numMinutes;
+        // Calculate cost (per second)
+        uint256 totalCost = config.costPerSecond * numSeconds;
         uint256 costWei = totalCost * 1e18;
         
         // Burn gold from player
@@ -161,7 +169,7 @@ contract GameV3 {
         
         // Create session
         uint256 startTime = block.timestamp;
-        uint256 endTime = startTime + (numMinutes * 60);
+        uint256 endTime = startTime + numSeconds;
         
         activeSessions[msg.sender] = MiningSession({
             levelId: levelId,
@@ -170,7 +178,7 @@ contract GameV3 {
             active: true
         });
         
-        emit SessionStarted(msg.sender, levelId, numMinutes, totalCost, startTime, endTime);
+        emit SessionStarted(msg.sender, levelId, numSeconds, totalCost, startTime, endTime);
     }
     
     /**
@@ -214,25 +222,25 @@ contract GameV3 {
     }
     
     /**
-     * @notice Get cost per minute for a level
+     * @notice Get cost per second for a level
      * @param levelId Level ID (0-4)
-     * @return Cost in GLD per minute
+     * @return Cost in GLD per second
      */
-    function getLevelCostPerMinute(uint8 levelId) public view returns (uint256) {
+    function getLevelCostPerSecond(uint8 levelId) public view returns (uint256) {
         require(levelId < 5, "Invalid level");
-        return levels[levelId].costPerMinute;
+        return levels[levelId].costPerSecond;
     }
     
     /**
      * @notice Calculate total cost for a mining session
      * @param levelId Level ID
-     * @param numMinutes Number of minutes
+     * @param numSeconds Number of seconds
      * @return Total cost in GLD
      */
-    function calculateSessionCost(uint8 levelId, uint8 numMinutes) external view returns (uint256) {
+    function calculateSessionCost(uint8 levelId, uint16 numSeconds) external view returns (uint256) {
         require(levelId < 5, "Invalid level");
-        require(numMinutes > 0, "Minutes must be positive");
-        return levels[levelId].costPerMinute * numMinutes;
+        require(numSeconds > 0, "Seconds must be positive");
+        return levels[levelId].costPerSecond * numSeconds;
     }
     
     /**

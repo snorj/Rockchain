@@ -2,7 +2,7 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(76, 175, 80, 0.9);
+  background: rgba(76, 175, 80, 0.7);
   border: 2px solid #4CAF50;
   padding: 12px 20px;
   border-radius: 8px;
@@ -17,17 +17,13 @@
 }
 
 .level-timer-display.warning {
-  background: rgba(255, 152, 0, 0.9);
+  background: rgba(255, 152, 0, 0.7);
   border-color: #FF9800;
   animation: pulse 1s infinite;
 }
 
-.timer-icon {
-  font-size: 18px;
-}
-
 .timer-text {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: bold;
   color: #fff;
   letter-spacing: 0.5px;
@@ -52,12 +48,8 @@
     padding: 8px 16px;
   }
   
-  .timer-icon {
-    font-size: 16px;
-  }
-  
   .timer-text {
-    font-size: 14px;
+    font-size: 20px;
   }
 }
 

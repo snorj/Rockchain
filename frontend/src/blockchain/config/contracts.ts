@@ -3,13 +3,14 @@ import GameV3ABI from '../abis/GameV3.json';
 import PickaxeNFTV2ABI from '../abis/PickaxeNFTV2.json';
 import GemNFTABI from '../abis/GemNFT.json';
 
-// Contract addresses from deployment (Sepolia testnet) - Using GameV3
-export const GOLD_TOKEN_ADDRESS = '0x6c4D595713e272C4dE42bfBEbA4717896651D336' as const;
-export const PICKAXE_NFT_ADDRESS = '0x6a2b4e521c0AFbd11DeF5858760C32231810220E' as const; // PickaxeNFTV2
-export const GEM_NFT_ADDRESS = '0x66ed8a577C21fC186273114C5Ebe447990B053B3' as const;
+// Contract addresses from deployment (Sepolia testnet) - Using GameV3 with per-second pricing
+// Deployed: 2025-11-04 (Fixed session expiry bug)
+export const GOLD_TOKEN_ADDRESS = '0x7EE178faA4FeD1D716eBdeB423867cb84921Eb8e' as const;
+export const PICKAXE_NFT_ADDRESS = '0x59fA2CBE753383c489C813d567085C8dbDa3cf66' as const; // PickaxeNFTV2
+export const GEM_NFT_ADDRESS = '0x8fa0fA6692acbFD470Af9f05bE9AFE9EAaa91e0E' as const;
 
-// Game contract address - GameV3 with per-minute pricing system
-export const GAME_ADDRESS = '0x1B0aF9c6B419e4Fa9c3491865a79B082add6282c' as const;
+// Game contract address - GameV3 with per-second pricing system (15s minimum)
+export const GAME_ADDRESS = '0xB840812A335843723D135dBf73949cA12ec67E36' as const;
 
 // Contract ABIs
 export const GOLD_TOKEN_ABI = GoldTokenABI.abi;

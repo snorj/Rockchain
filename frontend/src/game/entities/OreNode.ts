@@ -186,27 +186,6 @@ export class OreNode extends Phaser.GameObjects.Container {
     // Hide progress bar
     this.hideProgressBar();
     
-    // Get the collected material sprite (tile09)
-    const materialSpriteKey = `${this.material}-object`;
-    
-    // Create flying material icon
-    const icon = this.scene.add.image(this.x, this.y, materialSpriteKey);
-    icon.setScale(2.5);
-    
-    // Animate to top-left (inventory area)
-    this.scene.tweens.add({
-      targets: icon,
-      x: 100,
-      y: 50,
-      scale: 0.8,
-      alpha: 0,
-      duration: 800,
-      ease: 'Power2',
-      onComplete: () => {
-        icon.destroy();
-      }
-    });
-    
     // Particles effect
     this.createBreakParticles();
     

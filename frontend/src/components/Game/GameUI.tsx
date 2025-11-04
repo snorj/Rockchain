@@ -172,10 +172,8 @@ export const GameUI: React.FC = () => {
    * Handle materials sold (called by hooks)
    */
   const handleMaterialsSold = (goldEarned: number) => {
-    // Add gold to balance
-    useGameStore.getState().addGold(goldEarned);
-    
     // Clear inventory
+    // Note: Balance will sync automatically from blockchain via useGoldBalance hook
     useGameStore.getState().clearInventory();
   };
   

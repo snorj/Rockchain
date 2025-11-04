@@ -3,11 +3,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 /**
- * Deploy GameV3 with per-minute pricing
+ * Deploy GameV3 with per-second pricing
  * Deploys fresh contracts: GoldToken, PickaxeNFTV2, GemNFT, GameV3
  */
 async function main() {
-  console.log('🚀 Deploying GameV3 with Per-Minute Pricing System...\n');
+  console.log('🚀 Deploying GameV3 with Per-Second Pricing System...\n');
 
   // Get deployer info
   const [deployer] = await ethers.getSigners();
@@ -41,7 +41,7 @@ async function main() {
   console.log('✅ GemNFT deployed to:', gemNFTAddress, '\n');
 
   // 4. Deploy GameV3
-  console.log('📦 Deploying GameV3 (per-minute pricing)...');
+  console.log('📦 Deploying GameV3 (per-second pricing)...');
   const GameV3 = await ethers.getContractFactory("GameV3");
   const gameV3 = await GameV3.deploy(
     goldTokenAddress,
@@ -86,13 +86,17 @@ async function main() {
     gameVersion: 'V3',
     deployedAt: new Date().toISOString(),
     deployer: deployer.address,
-    pricingModel: 'per-minute',
+    pricingModel: 'per-second',
     levelCosts: {
-      level0: 0,
-      level1: '420 GLD/min',
-      level2: '2400 GLD/min',
-      level3: '6900 GLD/min',
-      level4: '18000 GLD/min'
+      level0: '0 GLD/sec (FREE)',
+      level1: '7 GLD/sec (420/min)',
+      level2: '40 GLD/sec (2400/min)',
+      level3: '115 GLD/sec (6900/min)',
+      level4: '300 GLD/sec (18000/min)'
+    },
+    purchaseRange: {
+      minSeconds: 15,
+      maxSeconds: 3600
     },
     pickaxeCosts: {
       wooden: 0,
@@ -109,7 +113,7 @@ async function main() {
 
   // 7. Print summary
   console.log('═══════════════════════════════════════════════════════');
-  console.log('📊 DEPLOYMENT SUMMARY - GameV3 (Per-Minute Pricing)');
+  console.log('📊 DEPLOYMENT SUMMARY - GameV3 (Per-Second Pricing)');
   console.log('═══════════════════════════════════════════════════════\n');
   
   console.log('Network:', deployedAddresses.network);
@@ -124,12 +128,17 @@ async function main() {
   console.log('  GameV3:', gameV3Address);
   console.log('');
   
-  console.log('💰 Level Costs (per minute):');
+  console.log('💰 Level Costs (per second):');
   console.log('  Level 0: FREE (unlimited)');
-  console.log('  Level 1: 420 GLD/min');
-  console.log('  Level 2: 2,400 GLD/min');
-  console.log('  Level 3: 6,900 GLD/min');
-  console.log('  Level 4: 18,000 GLD/min');
+  console.log('  Level 1: 7 GLD/sec (420 GLD/min)');
+  console.log('  Level 2: 40 GLD/sec (2,400 GLD/min)');
+  console.log('  Level 3: 115 GLD/sec (6,900 GLD/min)');
+  console.log('  Level 4: 300 GLD/sec (18,000 GLD/min)');
+  console.log('');
+  
+  console.log('⏱️  Purchase Range:');
+  console.log('  Minimum: 15 seconds');
+  console.log('  Maximum: 3,600 seconds (60 minutes)');
   console.log('');
   
   console.log('⛏️  Pickaxe Costs:');
@@ -147,7 +156,7 @@ async function main() {
   console.log('1. Verify contracts on Etherscan:');
   console.log(`   npx hardhat verify --network sepolia ${goldTokenAddress}`);
   console.log(`   npx hardhat verify --network sepolia ${pickaxeNFTAddress} ${goldTokenAddress}`);
-  console.log(`   npx hardhat verify --network sepolia ${gemNFTAddress} ${goldTokenAddress}`);
+  console.log(`   npx hardhat verify --network sepolia ${gemNFTAddress}`);
   console.log(`   npx hardhat verify --network sepolia ${gameV3Address} ${goldTokenAddress} ${pickaxeNFTAddress} ${gemNFTAddress}`);
   console.log('');
   console.log('2. Update frontend contract addresses:');
@@ -156,9 +165,9 @@ async function main() {
   console.log('');
   console.log('3. Test the new system:');
   console.log('   - Mint starter pickaxe');
-  console.log('   - Start 1-minute session on Level 1');
+  console.log('   - Purchase 15-second session on Level 1');
   console.log('   - Verify timer countdown');
-  console.log('   - Verify auto-return to Level 0');
+  console.log('   - Test different time increments');
   console.log('');
   console.log('═══════════════════════════════════════════════════════');
 }

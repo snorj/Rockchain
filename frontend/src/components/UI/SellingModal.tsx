@@ -23,8 +23,15 @@ export const SellingModal: React.FC<SellingModalProps> = ({
 }) => {
   if (!isOpen) return null;
 
+  const handleOverlayClick = () => {
+    // Don't allow closing while processing
+    if (!isProcessing) {
+      onClose();
+    }
+  };
+
   return (
-    <div className="modal-overlay selling-modal-overlay">
+    <div className="modal-overlay selling-modal-overlay" onClick={handleOverlayClick}>
       <div className="modal-content selling-modal" onClick={e => e.stopPropagation()}>
         {isProcessing && (
           <div className="selling-state processing">
@@ -42,9 +49,6 @@ export const SellingModal: React.FC<SellingModalProps> = ({
             <div className="success-icon">✓</div>
             <h3>Sale Successful!</h3>
             <p className="gold-earned">You earned <strong>{goldEarned}g</strong></p>
-            <p className="selling-hint" style={{ color: '#ff9800', marginTop: '10px' }}>
-              ⏱️ Wait 5-10 seconds for your balance to sync before making purchases.
-            </p>
             <button className="btn-primary" onClick={onClose}>
               Close
             </button>
