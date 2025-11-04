@@ -11,9 +11,7 @@ export const WalletButton = () => {
   const { wallets } = useWallets();
 
   const embeddedWallet = wallets.find((w) => w.walletClientType === 'privy');
-  const { balance, isLoading: balanceLoading } = useGoldBalance(
-    embeddedWallet?.address
-  );
+  useGoldBalance(embeddedWallet?.address);
 
   if (!ready || !authenticated) {
     return null; // Don't show anything if not authenticated

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { MATERIALS } from '../../game/config/materials';
-import type { MaterialType } from '../../game/config/materials';
 import './MaterialInfoPanel.css';
 
 /**

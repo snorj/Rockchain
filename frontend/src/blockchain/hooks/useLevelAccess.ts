@@ -64,7 +64,7 @@ export const useLevelAccess = (address?: string) => {
       
       if (active && endTimeMs > Date.now()) {
         const session = {
-          levelId: Number(levelId),
+          levelId: Number(levelId) as LevelId,
           startTime: startTimeMs,
           endTime: endTimeMs,
           active: true,
@@ -73,7 +73,7 @@ export const useLevelAccess = (address?: string) => {
         
         // Update game store
         useGameStore.getState().setActiveSession(session);
-        useGameStore.getState().setLevel(Number(levelId), endTimeMs);
+        useGameStore.getState().setLevel(Number(levelId) as LevelId, endTimeMs);
       } else {
         setActiveSession(null);
         
@@ -207,7 +207,6 @@ export const useLevelAccess = (address?: string) => {
             {
               sponsor: true,
               uiOptions: {
-                header: 'Approve GLD',
                 description: `Approve ${totalCost} GLD tokens for mining session`,
                 buttonText: 'Approve Tokens'
               }
@@ -353,8 +352,7 @@ export const useLevelAccess = (address?: string) => {
           {
             sponsor: true,
             uiOptions: {
-              header: `Starting ${levelConfig.name}`,
-              description: `Activating ${formatTime(numSeconds)} mining session`,
+              description: `Starting ${levelConfig.name} - ${formatTime(numSeconds)} mining session`,
               buttonText: 'Confirm',
             }
           }
@@ -476,8 +474,7 @@ export const useLevelAccess = (address?: string) => {
         {
           sponsor: true,
           uiOptions: {
-            header: 'End Mining Session',
-            description: 'Return to Level 1',
+            description: 'End Mining Session - Return to Level 1',
             buttonText: 'End Session',
           }
         }

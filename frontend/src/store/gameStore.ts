@@ -62,7 +62,7 @@ export interface GameState {
 /**
  * Zustand store for managing game state
  */
-export const useGameStore = create<GameState>((set, get) => ({
+export const useGameStore = create<GameState>((set) => ({
   // Initial state
   gold: 0,
   currentPickaxe: 'wooden',

@@ -120,9 +120,10 @@ export const usePickaxe = (address?: string) => {
         },
         {
           sponsor: true,
-          header: 'Mint Starter Pickaxe',
-          description: 'Get your free Wooden pickaxe to start mining!',
-          buttonText: 'Mint Pickaxe'
+          uiOptions: {
+            description: 'Mint Starter Pickaxe - Get your free Wooden pickaxe to start mining!',
+            buttonText: 'Mint Pickaxe'
+          }
         }
       );
 
@@ -182,9 +183,10 @@ export const usePickaxe = (address?: string) => {
           },
           {
             sponsor: true,
-            header: 'Approve GLD',
-            description: `Approve ${cost} GLD for pickaxe purchase`,
-            buttonText: 'Approve'
+            uiOptions: {
+              description: `Approve ${cost} GLD for pickaxe purchase`,
+              buttonText: 'Approve'
+            }
           }
         );
 
@@ -218,9 +220,10 @@ export const usePickaxe = (address?: string) => {
         },
         {
           sponsor: true,
-          header: 'Buy Pickaxe',
-          description: `Purchase ${tierName} pickaxe for ${cost} GLD`,
-          buttonText: 'Buy Pickaxe'
+          uiOptions: {
+            description: `Buy Pickaxe - Purchase ${tierName} pickaxe for ${cost} GLD`,
+            buttonText: 'Buy Pickaxe'
+          }
         }
       );
 
@@ -305,9 +308,10 @@ export const usePickaxe = (address?: string) => {
           },
           {
             sponsor: true,
-            header: 'Approve GLD',
-            description: `Approve ${repairCost} GLD for pickaxe repair`,
-            buttonText: 'Approve'
+            uiOptions: {
+              description: `Approve ${repairCost} GLD for pickaxe repair`,
+              buttonText: 'Approve'
+            }
           }
         );
 
@@ -341,9 +345,10 @@ export const usePickaxe = (address?: string) => {
         },
         {
           sponsor: true,
-          header: 'Repair Pickaxe',
-          description: `Repair your pickaxe for ${repairCost} GLD`,
-          buttonText: 'Repair'
+          uiOptions: {
+            description: `Repair Pickaxe - Repair your pickaxe for ${repairCost} GLD`,
+            buttonText: 'Repair'
+          }
         }
       );
 

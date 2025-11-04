@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useGameStore, getInventoryValue } from '../../store/gameStore';
-import { useSellResourcesV2, calculateTotalValue } from '../../blockchain/hooks/useSellResourcesV2';
+import { useSellResourcesV2 } from '../../blockchain/hooks/useSellResourcesV2';
 import { usePickaxe } from '../../blockchain/hooks/usePickaxe';
 import { useGoldBalance } from '../../blockchain/hooks/useGoldBalance';
 import { PICKAXES, getNextPickaxe } from '../../game/config/pickaxes';

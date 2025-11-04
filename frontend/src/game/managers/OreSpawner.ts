@@ -3,8 +3,6 @@ import { OreNode } from '../entities/OreNode';
 import type { LevelId } from '../config/levels';
 import { selectRandomMaterial } from '../config/levels';
 import type { PickaxeTier } from '../config/pickaxes';
-import { PICKAXES } from '../config/pickaxes';
-import { getMaterialRockSprite } from '../config/materials';
 
 /**
  * OreSpawner manages ore node spawning and tracking
@@ -14,7 +12,6 @@ export class OreSpawner {
   private scene: Phaser.Scene;
   private oreNodes: OreNode[] = [];
   private currentLevel: LevelId = 1;
-  private currentPickaxe: PickaxeTier = 'wooden';
   
   // Spawn area configuration
   private readonly SPAWN_AREA = {
@@ -42,9 +39,9 @@ export class OreSpawner {
   /**
    * Set current pickaxe (affects mining speed)
    */
-  public setPickaxe(pickaxe: PickaxeTier) {
-    this.currentPickaxe = pickaxe;
-    console.log(`⛏️  OreSpawner: Set pickaxe to ${pickaxe}`);
+  public setPickaxe(_pickaxe: PickaxeTier) {
+    // Pickaxe effects handled in game logic, not spawner
+    console.log(`⛏️  OreSpawner: Set pickaxe to ${_pickaxe}`);
   }
   
   /**

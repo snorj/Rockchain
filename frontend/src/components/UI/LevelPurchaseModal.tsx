@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import type { LevelId } from '../../game/config/levels';
 import { LEVELS } from '../../game/config/levels';
-import { PICKAXES } from '../../game/config/pickaxes';
 import './LevelPurchaseModal.css';
 
 interface LevelPurchaseModalProps {

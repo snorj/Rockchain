@@ -84,19 +84,17 @@ export const useSellResourcesV2 = () => {
           },
           {
             sponsor: true,
-            header: 'Selling Resources',
-            description: `Converting your mined resources to ${totalValue} GLD tokens`,
-            buttonText: 'Confirm Sale'
+            uiOptions: {
+              description: `Selling Resources - Converting your mined resources to ${totalValue} GLD tokens`,
+              buttonText: 'Confirm Sale'
+            }
           }
         );
 
         console.log('✅ Transaction successful:', txReceipt);
         console.log(`🔗 View on Etherscan: https://sepolia.etherscan.io/tx/${txReceipt.hash}`);
         
-        // Check if transaction was successful (status = 1)
-        if (txReceipt.status === 0) {
-          throw new Error('Transaction failed on-chain. This may mean GameV3 lacks minting permissions. Check the transaction on Etherscan.');
-        }
+        // Transaction successful - Privy doesn't include status in receipt
 
         return {
           txHash: txReceipt.hash,

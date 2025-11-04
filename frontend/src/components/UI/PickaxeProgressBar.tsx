@@ -1,7 +1,6 @@
 import React from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { PICKAXES, getNextPickaxe } from '../../game/config/pickaxes';
-import type { PickaxeTier } from '../../game/config/pickaxes';
 import { formatNumber } from '../../utils/numberFormat';
 import './PickaxeProgressBar.css';
 

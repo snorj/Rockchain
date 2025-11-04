@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { useGameStore } from '../../store/gameStore';
 import { useLevelAccess } from '../../blockchain/hooks/useLevelAccess';
-import { LEVELS, canAccessLevel, formatTimeRemaining } from '../../game/config/levels';
+import { LEVELS, canAccessLevel } from '../../game/config/levels';
 import type { LevelId } from '../../game/config/levels';
 import { PICKAXES } from '../../game/config/pickaxes';
 import { LevelPurchaseModal } from './LevelPurchaseModal';
@@ -30,9 +30,9 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
   const currentLevel = useGameStore(state => state.currentLevel);
   const levelExpiry = useGameStore(state => state.levelExpiry);
   
-  const { approveMiningSession, startMiningSession, isPurchasing, getTimeRemaining } = useLevelAccess(embeddedWallet?.address);
+  const { approveMiningSession, startMiningSession, isPurchasing } = useLevelAccess(embeddedWallet?.address);
   
-  const [timeRemaining, setTimeRemaining] = useState<number>(0);
+  const [, setTimeRemaining] = useState<number>(0);
   const [isExpanded, setIsExpanded] = useState(false);
   const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const [selectedLevel, setSelectedLevel] = useState<LevelId | null>(null);
