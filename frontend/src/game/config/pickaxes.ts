@@ -23,7 +23,7 @@ export interface PickaxeConfig {
  * Each pickaxe unlocks access to the corresponding level
  * 
  * IMPORTANT: Order matches smart contract enum Tier { Wooden, Iron, Steel, Mythril, Adamantite }
- * Prices match smart contract: [0, 100, 300, 1000, 5000] GLD
+ * Prices match smart contract: [0, 500, 1500, 6000, 20000] GLD
  */
 export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
   wooden: {

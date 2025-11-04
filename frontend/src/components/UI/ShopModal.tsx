@@ -8,6 +8,7 @@ import type { PickaxeTier } from '../../game/config/pickaxes';
 import { MATERIALS } from '../../game/config/materials';
 import type { MaterialType } from '../../game/config/materials';
 import { SellingModal } from './SellingModal';
+import { PurchasingModal } from './PurchasingModal';
 import './ShopModal.css';
 
 interface ShopModalProps {
@@ -43,6 +44,11 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   const [sellingError, setSellingError] = useState<string | null>(null);
   const [goldEarned, setGoldEarned] = useState<number>(0);
   
+  const [purchasingModalOpen, setPurchasingModalOpen] = useState(false);
+  const [purchasingSuccess, setPurchasingSuccess] = useState(false);
+  const [purchasingError, setPurchasingError] = useState<string | null>(null);
+  const [purchasedPickaxe, setPurchasedPickaxe] = useState<{ name: string; price: number } | null>(null);
+  
   const currentPickaxeConfig = PICKAXES[currentPickaxe];
   const nextPickaxe = getNextPickaxe(currentPickaxe);
   const inventoryValue = getInventoryValue(inventory);
@@ -76,6 +82,12 @@ export const ShopModal: React.FC<ShopModalProps> = ({
       return;
     }
     
+    // Open the purchasing modal
+    setPurchasingModalOpen(true);
+    setPurchasingSuccess(false);
+    setPurchasingError(null);
+    setPurchasedPickaxe({ name: pickaxeConfig.name, price: pickaxeConfig.price });
+    
     try {
       console.log(`🔨 Purchasing ${pickaxeConfig.name} (tier ${pickaxeConfig.tier})...`);
       
@@ -89,11 +101,37 @@ export const ShopModal: React.FC<ShopModalProps> = ({
       onPickaxePurchased(pickaxe);
       useGameStore.getState().removeGold(pickaxeConfig.price);
       
-      alert(`Successfully purchased ${pickaxeConfig.name}!`);
-      onClose();
+      setPurchasingSuccess(true);
     } catch (error: any) {
       console.error('❌ Failed to purchase pickaxe:', error);
-      alert(`Failed to purchase pickaxe: ${error.message || 'Unknown error'}`);
+      
+      // Extract a more user-friendly error message
+      let errorMessage = 'Unknown error occurred';
+      
+      if (error.message) {
+        if (error.message.includes('Insufficient GLD')) {
+          errorMessage = 'Insufficient GLD balance in your wallet. You may need to sell materials first or your displayed balance may not be synced.';
+        } else if (error.message.includes('user rejected')) {
+          errorMessage = 'Transaction was rejected';
+        } else if (error.message.includes('Already has pickaxe')) {
+          errorMessage = 'You already own this pickaxe tier';
+        } else if (error.message.includes('Must buy next tier')) {
+          errorMessage = 'You must purchase pickaxes in order (one tier at a time)';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setPurchasingError(errorMessage);
+    }
+  };
+  
+  const handleClosePurchasingModal = () => {
+    setPurchasingModalOpen(false);
+    setPurchasingSuccess(false);
+    setPurchasingError(null);
+    if (purchasingSuccess) {
+      onClose(); // Close the shop modal on success
     }
   };
   
@@ -300,6 +338,17 @@ export const ShopModal: React.FC<ShopModalProps> = ({
         error={sellingError}
         goldEarned={goldEarned}
         onClose={handleCloseSellingModal}
+      />
+      
+      {/* Purchasing Modal */}
+      <PurchasingModal
+        isOpen={purchasingModalOpen}
+        isProcessing={isBuying}
+        isSuccess={purchasingSuccess}
+        error={purchasingError}
+        pickaxeName={purchasedPickaxe?.name}
+        pickaxePrice={purchasedPickaxe?.price}
+        onClose={handleClosePurchasingModal}
       />
     </div>
   );

@@ -158,6 +158,10 @@ export const usePickaxe = (address?: string) => {
     try {
       const cost = PICKAXE_CONFIG.COSTS[tier];
       const costWei = parseEther(cost.toString());
+      const tierName = PICKAXE_CONFIG.TIERS[tier];
+
+      console.log(`🔨 Purchasing ${tierName} pickaxe (tier ${tier})...`);
+      console.log(`💰 Cost: ${cost} GLD (${costWei.toString()} wei)`);
 
       // First, approve GLD spending
       console.log(`💰 Approving ${cost} GLD for pickaxe purchase...`);
@@ -185,7 +189,7 @@ export const usePickaxe = (address?: string) => {
       console.log('✅ GLD approved:', approveReceipt.hash);
 
       // Then, buy pickaxe
-      console.log(`🔨 Buying ${PICKAXE_CONFIG.TIERS[tier]} pickaxe...`);
+      console.log(`🔨 Buying ${tierName} pickaxe...`);
       
       const buyData = encodeFunctionData({
         abi: PICKAXE_NFT_ABI,
@@ -202,7 +206,7 @@ export const usePickaxe = (address?: string) => {
         {
           sponsor: true,
           header: 'Buy Pickaxe',
-          description: `Purchase ${PICKAXE_CONFIG.TIERS[tier]} pickaxe for ${cost} GLD`,
+          description: `Purchase ${tierName} pickaxe for ${cost} GLD`,
           buttonText: 'Buy Pickaxe'
         }
       );
@@ -214,8 +218,17 @@ export const usePickaxe = (address?: string) => {
       await fetchPickaxe();
 
       return buyReceipt.hash;
-    } catch (error) {
-      console.error('Failed to buy pickaxe:', error);
+    } catch (error: any) {
+      console.error('❌ Failed to buy pickaxe:', error);
+      
+      // Enhance error message for better debugging
+      if (error.message) {
+        console.error('Error message:', error.message);
+      }
+      if (error.reason) {
+        console.error('Error reason:', error.reason);
+      }
+      
       throw error;
     } finally {
       setIsBuying(false);
