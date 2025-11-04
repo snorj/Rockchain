@@ -3,6 +3,7 @@ import { GameUI } from '../Game/GameUI';
 import { InventoryPanel } from '../UI/InventoryPanel';
 import { WalletButton } from '../Web3/WalletButton';
 import { InventoryControls } from '../UI/InventoryControls';
+import { LevelSelectorWrapper } from '../UI/LevelSelectorWrapper';
 import { GOLD_TOKEN_ADDRESS, GAME_V2_ADDRESS } from '../../blockchain/config/contracts';
 import './GameLayout.css';
 
@@ -31,13 +32,14 @@ export const GameLayout = () => {
         </div>
         
         <div className="sidebar sidebar-right">
+          <LevelSelectorWrapper />
           <InventoryControls />
           <InventoryPanel />
         </div>
       </main>
 
       <footer className="game-footer">
-        <p>Built with Phaser.js & React • Click ores to mine them • Press S for Shop, I for Info</p>
+        <p>Click ores to mine them • Press S for Shop, I for Info</p>
         <div className="contract-addresses">
           <div className="contract-address">
             <span className="contract-label">GLD Token:</span>

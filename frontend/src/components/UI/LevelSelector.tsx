@@ -116,20 +116,8 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
           <span className="level-tier">Level {currentLevel}</span>
         </div>
         
-        {levelExpiry && timeRemaining > 0 && (
-          <div className={`level-timer ${timeRemaining < 30 ? 'warning' : ''}`}>
-            ⏰ {formatTimeRemaining(timeRemaining)}
-          </div>
-        )}
-        
-        {!levelExpiry && (
-          <div className="level-timer unlimited">
-            ∞ Unlimited
-          </div>
-        )}
-        
         <button className="expand-button" disabled={isPurchasing}>
-          {isPurchasing ? '⏳' : isExpanded ? '▲' : '▼'}
+          {isExpanded ? '▲' : '▼'}
         </button>
       </div>
       
@@ -162,7 +150,13 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
                 
                 <div className="level-option-requirements">
                   <div className="requirement">
-                    <span className="req-icon">⛏️</span>
+                    <span className="req-icon">
+                      <img 
+                        src={`/assets/sprites/pickaxes/${level.requiredPickaxe}/pickaxe-${level.requiredPickaxe}.png`} 
+                        alt="pickaxe"
+                        style={{ width: '16px', height: '16px' }}
+                      />
+                    </span>
                     <span className={hasPickaxe ? 'req-met' : 'req-unmet'}>
                       {PICKAXES[level.requiredPickaxe].name}
                       {!hasPickaxe && ' (Required)'}
@@ -171,7 +165,6 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
                   
                   {level.accessCost > 0 && (
                     <div className="requirement">
-                      <span className="req-icon">💰</span>
                       <span className={canAfford ? 'req-met' : 'req-unmet'}>
                         {level.accessCost}g ({level.accessDuration / 60} min)
                       </span>
@@ -180,7 +173,6 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
                   
                   {level.accessCost === 0 && (
                     <div className="requirement">
-                      <span className="req-icon">✨</span>
                       <span className="req-met">Free Forever</span>
                     </div>
                   )}
@@ -188,7 +180,6 @@ export const LevelSelector: React.FC<LevelSelectorProps> = ({
                 
                 {isLocked && (
                   <div className="locked-overlay">
-                    <span className="lock-icon">🔒</span>
                     <span>Upgrade pickaxe to unlock</span>
                   </div>
                 )}

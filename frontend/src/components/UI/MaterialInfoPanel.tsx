@@ -50,7 +50,7 @@ export const MaterialInfoPanel: React.FC = () => {
                 className={selectedTier === tier ? 'active' : ''}
                 onClick={() => setSelectedTier(tier)}
               >
-                T{tier}
+                {tier}
               </button>
             ))}
           </div>
@@ -117,7 +117,7 @@ export const MaterialInfoPanel: React.FC = () => {
               <div className="material-stats">
                 <div className="stat">
                   <span className="stat-label">Tier:</span>
-                  <span className="stat-value tier-badge">T{material.tier}</span>
+                  <span className="stat-value tier-badge">{material.tier}</span>
                 </div>
                 <div className="stat">
                   <span className="stat-label">HP:</span>

@@ -1,9 +1,10 @@
-.modal-overlay {
-  position: fixed;
+/* Modal overlay styling inherited from GameUI.css */
+/*.modal-overlay {
+  position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  width: 800px;
+  height: 600px;
   background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
@@ -11,7 +12,8 @@
   z-index: 10000;
   backdrop-filter: blur(4px);
   animation: fadeIn 0.3s ease;
-}
+  pointer-events: auto;
+}*/
 
 @keyframes fadeIn {
   from {
@@ -22,13 +24,15 @@
   }
 }
 
-.modal-content {
+.level-expiry-modal {
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   border: 3px solid #444;
   border-radius: 16px;
   padding: 32px;
   max-width: 500px;
   width: 90%;
+  max-height: 550px;
+  overflow-y: auto;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
   animation: slideUp 0.3s ease;
 }
@@ -174,9 +178,11 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
-  .modal-content {
+@media (max-width: 768px) {
+  .level-expiry-modal {
     padding: 24px;
+    max-width: 95%;
+    max-height: 95%;
   }
   
   .modal-title {

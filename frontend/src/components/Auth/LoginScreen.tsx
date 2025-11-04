@@ -19,15 +19,15 @@ export const LoginScreen = () => {
         <div className="login-content">
           <div className="feature-list">
             <div className="feature-item">
-              <img src="/assets/sprites/ores/diamond/tile00.png" alt="Diamond" className="feature-icon" />
+              <img src="/assets/sprites/ores/iron/tile07.png" alt="Iron" className="feature-icon" />
               <span className="feature-text">Mine Coal, Iron & Diamond</span>
             </div>
             <div className="feature-item">
-              <img src="/assets/sprites/ores/gold/tile000.png" alt="Gold" className="feature-icon" />
+              <img src="/assets/sprites/ores/gold/tile09.png" alt="Gold" className="feature-icon" />
               <span className="feature-text">Earn GLD tokens on blockchain</span>
             </div>
             <div className="feature-item">
-              <img src="/assets/sprites/gems/ruby/tile00.png" alt="Ruby" className="feature-icon" />
+              <img src="/assets/sprites/gems/diamond/tile09.png" alt="Diamond" className="feature-icon" />
               <span className="feature-text">Play for free, no wallet needed</span>
             </div>
           </div>

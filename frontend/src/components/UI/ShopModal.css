@@ -68,6 +68,7 @@
   color: #aaa;
   font-size: 14px;
   font-weight: bold;
+  font-family: 'Pixelify Sans', Arial, sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
 }

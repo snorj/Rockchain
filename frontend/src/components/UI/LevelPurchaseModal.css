@@ -1,5 +1,5 @@
-/* Modal Overlay */
-.modal-overlay {
+/* Modal Overlay - styling inherited from GameUI.css */
+/*.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -12,7 +12,7 @@
   z-index: 10000;
   backdrop-filter: blur(4px);
   animation: fadeIn 0.2s ease-out;
-}
+}*/
 
 @keyframes fadeIn {
   from {
@@ -30,7 +30,7 @@
   border-radius: 16px;
   max-width: 540px;
   width: 90%;
-  max-height: 85vh;
+  max-height: 550px;
   overflow-y: auto;
   box-shadow: 
     0 0 40px rgba(255, 204, 0, 0.3),
@@ -503,10 +503,10 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .modal-container {
     max-width: 95%;
-    max-height: 90vh;
+    max-height: 95%;
   }
   
   .modal-title {

@@ -7,6 +7,7 @@ import { PICKAXES, getNextPickaxe } from '../../game/config/pickaxes';
 import type { PickaxeTier } from '../../game/config/pickaxes';
 import { MATERIALS } from '../../game/config/materials';
 import type { MaterialType } from '../../game/config/materials';
+import { SellingModal } from './SellingModal';
 import './ShopModal.css';
 
 interface ShopModalProps {
@@ -37,6 +38,10 @@ export const ShopModal: React.FC<ShopModalProps> = ({
   const { buyPickaxe, isBuying } = usePickaxe(embeddedWallet?.address);
   
   const [activeTab, setActiveTab] = useState<ShopTab>('sell');
+  const [sellingModalOpen, setSellingModalOpen] = useState(false);
+  const [sellingSuccess, setSellingSuccess] = useState(false);
+  const [sellingError, setSellingError] = useState<string | null>(null);
+  const [goldEarned, setGoldEarned] = useState<number>(0);
   
   const currentPickaxeConfig = PICKAXES[currentPickaxe];
   const nextPickaxe = getNextPickaxe(currentPickaxe);
@@ -71,26 +76,24 @@ export const ShopModal: React.FC<ShopModalProps> = ({
       return;
     }
     
-    if (window.confirm(`Purchase ${pickaxeConfig.name} for ${pickaxeConfig.price}g?`)) {
-      try {
-        console.log(`🔨 Purchasing ${pickaxeConfig.name} (tier ${pickaxeConfig.tier})...`);
-        
-        // Call blockchain to buy pickaxe
-        const blockchainTier = getBlockchainTier(pickaxe);
-        await buyPickaxe(blockchainTier);
-        
-        console.log(`✅ Successfully purchased ${pickaxeConfig.name} on blockchain`);
-        
-        // Update local game state
-        onPickaxePurchased(pickaxe);
-        useGameStore.getState().removeGold(pickaxeConfig.price);
-        
-        alert(`Successfully purchased ${pickaxeConfig.name}!`);
-        onClose();
-      } catch (error: any) {
-        console.error('❌ Failed to purchase pickaxe:', error);
-        alert(`Failed to purchase pickaxe: ${error.message || 'Unknown error'}`);
-      }
+    try {
+      console.log(`🔨 Purchasing ${pickaxeConfig.name} (tier ${pickaxeConfig.tier})...`);
+      
+      // Call blockchain to buy pickaxe
+      const blockchainTier = getBlockchainTier(pickaxe);
+      await buyPickaxe(blockchainTier);
+      
+      console.log(`✅ Successfully purchased ${pickaxeConfig.name} on blockchain`);
+      
+      // Update local game state
+      onPickaxePurchased(pickaxe);
+      useGameStore.getState().removeGold(pickaxeConfig.price);
+      
+      alert(`Successfully purchased ${pickaxeConfig.name}!`);
+      onClose();
+    } catch (error: any) {
+      console.error('❌ Failed to purchase pickaxe:', error);
+      alert(`Failed to purchase pickaxe: ${error.message || 'Unknown error'}`);
     }
   };
   
@@ -105,16 +108,28 @@ export const ShopModal: React.FC<ShopModalProps> = ({
       return;
     }
     
-    if (window.confirm(`Sell all materials for ${inventoryValue}g?`)) {
-      try {
-        const result = await sellResources(inventory);
-        onMaterialsSold(result.goldEarned);
-        alert(`Successfully sold materials for ${result.goldEarned}g!`);
-        onClose();
-      } catch (error: any) {
-        console.error('Failed to sell materials:', error);
-        alert(`Failed to sell materials: ${error.message || 'Unknown error'}`);
-      }
+    // Open the selling modal
+    setSellingModalOpen(true);
+    setSellingSuccess(false);
+    setSellingError(null);
+    
+    try {
+      const result = await sellResources(inventory);
+      setGoldEarned(result.goldEarned);
+      setSellingSuccess(true);
+      onMaterialsSold(result.goldEarned);
+    } catch (error: any) {
+      console.error('Failed to sell materials:', error);
+      setSellingError(error.message || 'Unknown error occurred');
+    }
+  };
+  
+  const handleCloseSellingModal = () => {
+    setSellingModalOpen(false);
+    setSellingSuccess(false);
+    setSellingError(null);
+    if (sellingSuccess) {
+      onClose(); // Close the shop modal on success
     }
   };
   
@@ -276,6 +291,16 @@ export const ShopModal: React.FC<ShopModalProps> = ({
           </div>
         )}
       </div>
+      
+      {/* Selling Modal */}
+      <SellingModal
+        isOpen={sellingModalOpen}
+        isProcessing={isSelling}
+        isSuccess={sellingSuccess}
+        error={sellingError}
+        goldEarned={goldEarned}
+        onClose={handleCloseSellingModal}
+      />
     </div>
   );
 };

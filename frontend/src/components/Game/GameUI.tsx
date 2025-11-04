@@ -4,9 +4,10 @@ import { useGameStore } from '../../store/gameStore';
 import { useGoldBalance } from '../../blockchain/hooks/useGoldBalance';
 import { usePickaxe } from '../../blockchain/hooks/usePickaxe';
 import { MaterialInfoPanel } from '../UI/MaterialInfoPanel';
-import { LevelSelector } from '../UI/LevelSelector';
+import { LevelTimer } from '../UI/LevelTimer';
 import { LevelExpiryModal } from '../UI/LevelExpiryModal';
 import { ShopModal } from '../UI/ShopModal';
+import { formatNumber, getDynamicFontSize } from '../../utils/numberFormat';
 import type { LevelId } from '../../game/config/levels';
 import type { PickaxeTier } from '../../game/config/pickaxes';
 import type { MiningScene } from '../../game/scenes/MiningScene';
@@ -180,6 +181,20 @@ export const GameUI: React.FC = () => {
   };
   
   /**
+   * Expose level change handlers to window for LevelSelector in sidebar
+   */
+  useEffect(() => {
+    (window as any).gameLevelHandlers = {
+      onLevelChange: handleLevelChange,
+      onPurchaseSuccess: handlePurchaseSuccess
+    };
+    
+    return () => {
+      (window as any).gameLevelHandlers = null;
+    };
+  }, []);
+  
+  /**
    * Keyboard shortcuts and custom events from InventoryControls
    */
   useEffect(() => {
@@ -233,15 +248,23 @@ export const GameUI: React.FC = () => {
       {/* Top Bar */}
       <div className="ui-top-bar">
         <div className="gold-display">
-          <span className="gold-amount">{gold.toLocaleString()}</span>
+          <img 
+            src="/assets/sprites/ores/gold/tile04.png" 
+            alt="Gold" 
+            className="gold-icon-img"
+          />
+          <span 
+            className="gold-amount" 
+            style={{ fontSize: `${getDynamicFontSize(gold)}px` }}
+          >
+            {formatNumber(gold)}
+          </span>
           <span className="gold-label">GLD</span>
         </div>
-        
-        <LevelSelector 
-          onPurchaseSuccess={handlePurchaseSuccess}
-          onLevelChange={handleLevelChange}
-        />
       </div>
+      
+      {/* Level Timer - Top Right */}
+      <LevelTimer />
       
       {/* Material Info Modal */}
       {showInfo && (

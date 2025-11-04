@@ -37,6 +37,7 @@
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid #555;
+  font-family: 'Pixelify Sans', 'Arial Black', sans-serif;
 }
 
 .filter-group {
@@ -65,6 +66,7 @@
   border-radius: 4px;
   color: #aaa;
   font-size: 12px;
+  font-family: 'Pixelify Sans', 'Arial Black', sans-serif;
   cursor: pointer;
   transition: all 0.2s ease;
 }
