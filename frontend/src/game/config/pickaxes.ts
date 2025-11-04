@@ -23,7 +23,7 @@ export interface PickaxeConfig {
  * Each pickaxe unlocks access to the corresponding level
  * 
  * IMPORTANT: Order matches smart contract enum Tier { Wooden, Iron, Steel, Mythril, Adamantite }
- * Prices match smart contract: [0, 500, 1500, 6000, 20000] GLD
+ * Prices match smart contract: [0, 750, 7000, 52000, 380000] GLD
  */
 export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
   wooden: {
@@ -41,7 +41,7 @@ export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
     name: 'Stone Pickaxe',
     tier: 2,
     miningSpeed: 1.5,      // 50% faster (0.8x mining time)
-    price: 500,            // Updated for per-minute economy (was 100)
+    price: 750,            // Starter upgrade price
     levelUnlocked: 2,
     spritePath: '/assets/sprites/pickaxes/stone/pickaxe-stone.png',
     color: '#708090'
@@ -51,7 +51,7 @@ export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
     name: 'Steel Pickaxe',
     tier: 3,
     miningSpeed: 2.0,      // 2x faster (0.65x mining time)
-    price: 1500,           // Updated for per-minute economy (was 300)
+    price: 7000,           // Balanced progression
     levelUnlocked: 3,
     spritePath: '/assets/sprites/pickaxes/steel/pickaxe-steel.png',
     color: '#4682B4'
@@ -61,7 +61,7 @@ export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
     name: 'Mythril Pickaxe',
     tier: 4,
     miningSpeed: 3.0,      // 3x faster (0.5x mining time)
-    price: 6000,           // Updated for per-minute economy (was 1000)
+    price: 52000,          // Balanced progression
     levelUnlocked: 4,
     spritePath: '/assets/sprites/pickaxes/mythril/pickaxe-mythril.png',
     color: '#7FB3D5'
@@ -71,7 +71,7 @@ export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
     name: 'Adamantite Pickaxe',
     tier: 5,
     miningSpeed: 4.5,      // 4.5x faster (0.35x mining time)
-    price: 20000,          // Updated for per-minute economy (was 5000)
+    price: 380000,         // Balanced progression
     levelUnlocked: 5,
     spritePath: '/assets/sprites/pickaxes/adamantite/pickaxe-adamantite.png',
     color: '#FF1744'

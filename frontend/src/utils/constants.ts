@@ -68,8 +68,8 @@ export const PICKAXE_CONFIG = {
   // Speed multipliers (lower = faster mining)
   SPEED_MULTIPLIERS: [1.0, 0.8, 0.65, 0.5, 0.35],
   
-  // Costs in GLD (updated to match smart contract prices)
-  COSTS: [0, 500, 1500, 6000, 20000],
+  // Costs in GLD (MUST match smart contract PickaxeNFTV2.sol tierCosts)
+  COSTS: [0, 750, 7000, 52000, 380000],
   
   // Durability (uses per pickaxe)
   DURABILITY: [100, 150, 200, 250, 300],

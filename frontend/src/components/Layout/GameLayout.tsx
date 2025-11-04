@@ -4,6 +4,7 @@ import { InventoryPanel } from '../UI/InventoryPanel';
 import { WalletButton } from '../Web3/WalletButton';
 import { InventoryControls } from '../UI/InventoryControls';
 import { LevelSelectorWrapper } from '../UI/LevelSelectorWrapper';
+import { PickaxeProgressBar } from '../UI/PickaxeProgressBar';
 import { GOLD_TOKEN_ADDRESS, GAME_ADDRESS } from '../../blockchain/config/contracts';
 import './GameLayout.css';
 
@@ -35,6 +36,7 @@ export const GameLayout = () => {
           <LevelSelectorWrapper />
           <InventoryControls />
           <InventoryPanel />
+          <PickaxeProgressBar />
         </div>
       </main>
 

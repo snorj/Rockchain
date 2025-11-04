@@ -43,12 +43,12 @@ contract PickaxeNFTV2 is ERC721, Ownable {
         require(_goldToken != address(0), "Invalid token address");
         goldToken = GoldToken(_goldToken);
         
-        // Set updated tier costs (5x increase for per-minute economy)
+        // Set tier costs for balanced progression
         tierCosts[0] = 0;                  // Wooden: Free
-        tierCosts[1] = 500 * 1e18;         // Iron: 500 GLD (was 100)
-        tierCosts[2] = 1500 * 1e18;        // Steel: 1500 GLD (was 300)
-        tierCosts[3] = 6000 * 1e18;        // Mythril: 6000 GLD (was 1000)
-        tierCosts[4] = 20000 * 1e18;       // Adamantite: 20000 GLD (was 5000)
+        tierCosts[1] = 750 * 1e18;         // Iron: 750 GLD (starter upgrade)
+        tierCosts[2] = 7000 * 1e18;        // Steel: 7000 GLD
+        tierCosts[3] = 52000 * 1e18;       // Mythril: 52000 GLD
+        tierCosts[4] = 380000 * 1e18;      // Adamantite: 380000 GLD
         
         // Set tier durability
         tierDurability[0] = 100;   // Wooden: 100 uses

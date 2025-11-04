@@ -49,7 +49,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 1,
     type: 'ore',
     hp: 3,
-    goldValue: 1,
+    goldValue: 2,
     spriteFolder: 'ores/stone',
     color: '#8B8680'
   },
@@ -59,7 +59,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 1,
     type: 'ore',
     hp: 3,
-    goldValue: 3,
+    goldValue: 4,
     spriteFolder: 'ores/copper',
     color: '#B87333'
   },
@@ -69,7 +69,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 1,
     type: 'ore',
     hp: 3,
-    goldValue: 3,
+    goldValue: 4,
     spriteFolder: 'ores/tin',
     color: '#C0C0C0'
   },
@@ -79,7 +79,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 1,
     type: 'ore',
     hp: 3,
-    goldValue: 5,
+    goldValue: 7,
     spriteFolder: 'ores/coal',
     color: '#2C2C2C'
   },
@@ -91,7 +91,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 2,
     type: 'ore',
     hp: 6,
-    goldValue: 10,
+    goldValue: 20,
     spriteFolder: 'ores/iron',
     color: '#666666'
   },
@@ -101,7 +101,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 2,
     type: 'ore',
     hp: 6,
-    goldValue: 8,
+    goldValue: 18,
     spriteFolder: 'ores/lead',
     color: '#4A4A4A'
   },
@@ -111,7 +111,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 2,
     type: 'ore',
     hp: 6,
-    goldValue: 12,
+    goldValue: 50,
     spriteFolder: 'ores/cobalt',
     color: '#0047AB'
   },
@@ -123,7 +123,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 3,
     type: 'ore',
     hp: 9,
-    goldValue: 25,
+    goldValue: 150,
     spriteFolder: 'ores/silver',
     color: '#C0C0C0'
   },
@@ -133,7 +133,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 3,
     type: 'ore',
     hp: 9,
-    goldValue: 50,
+    goldValue: 130,
     spriteFolder: 'ores/gold',
     color: '#FFD700'
   },
@@ -143,7 +143,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 3,
     type: 'ore',
     hp: 9,
-    goldValue: 60,
+    goldValue: 220,
     spriteFolder: 'ores/platinum',
     color: '#E5E4E2'
   },
@@ -153,7 +153,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 3,
     type: 'ore',
     hp: 9,
-    goldValue: 55,
+    goldValue: 165,
     spriteFolder: 'ores/titanium',
     color: '#878681'
   },
@@ -163,7 +163,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 3,
     type: 'ore',
     hp: 9,
-    goldValue: 55,
+    goldValue: 110,
     spriteFolder: 'ores/tungsten',
     color: '#5C5C5C'
   },
@@ -173,7 +173,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 3,
     type: 'gem',
     hp: 9,
-    goldValue: 100,
+    goldValue: 2000,
     spriteFolder: 'gems/emerald',
     color: '#50C878'
   },
@@ -185,7 +185,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 4,
     type: 'ore',
     hp: 12,
-    goldValue: 100,
+    goldValue: 1100,
     spriteFolder: 'ores/palladium',
     color: '#CED0DD'
   },
@@ -195,7 +195,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 4,
     type: 'ore',
     hp: 12,
-    goldValue: 110,
+    goldValue: 1200,
     spriteFolder: 'ores/orichalcum',
     color: '#DA8A67'
   },
@@ -205,7 +205,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 4,
     type: 'gem',
     hp: 12,
-    goldValue: 120,
+    goldValue: 2200,
     spriteFolder: 'gems/topaz',
     color: '#FFCC00'
   },
@@ -215,7 +215,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 4,
     type: 'gem',
     hp: 12,
-    goldValue: 120,
+    goldValue: 2000,
     spriteFolder: 'gems/aquamarine',
     color: '#7FFFD4'
   },
@@ -225,7 +225,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 4,
     type: 'gem',
     hp: 12,
-    goldValue: 110,
+    goldValue: 1800,
     spriteFolder: 'gems/peridot',
     color: '#E6E200'
   },
@@ -235,7 +235,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 4,
     type: 'gem',
     hp: 12,
-    goldValue: 150,
+    goldValue: 3600,
     spriteFolder: 'gems/ruby',
     color: '#E0115F'
   },
@@ -245,7 +245,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 4,
     type: 'gem',
     hp: 12,
-    goldValue: 150,
+    goldValue: 3800,
     spriteFolder: 'gems/sapphire',
     color: '#0F52BA'
   },
@@ -257,7 +257,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 5,
     type: 'ore',
     hp: 15,
-    goldValue: 300,
+    goldValue: 9000,
     spriteFolder: 'ores/mythril',
     color: '#7FB3D5'
   },
@@ -267,7 +267,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 5,
     type: 'ore',
     hp: 15,
-    goldValue: 350,
+    goldValue: 11000,
     spriteFolder: 'ores/adamantite',
     color: '#FF1744'
   },
@@ -277,7 +277,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 5,
     type: 'ore',
     hp: 15,
-    goldValue: 320,
+    goldValue: 13000,
     spriteFolder: 'ores/meteorite',
     color: '#4A235A'
   },
@@ -287,7 +287,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 5,
     type: 'gem',
     hp: 15,
-    goldValue: 500,
+    goldValue: 38000,
     spriteFolder: 'gems/diamond',
     color: '#B9F2FF'
   },
@@ -297,7 +297,7 @@ export const MATERIALS: Record<MaterialType, MaterialConfig> = {
     tier: 5,
     type: 'gem',
     hp: 15,
-    goldValue: 400,
+    goldValue: 42000,
     spriteFolder: 'gems/amethyst',
     color: '#9966CC'
   }

@@ -1,0 +1,234 @@
+/* Pickaxe Progress Bar - Underneath Inventory */
+.pickaxe-progress-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto;
+  margin-top: auto;
+}
+
+.pickaxe-progress-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 10px 12px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Current and Next Pickaxe Displays */
+.pickaxe-progress-current,
+.pickaxe-progress-next {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 50px;
+}
+
+.pickaxe-progress-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  transition: transform 0.2s ease;
+}
+
+.pickaxe-progress-icon.next {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 2px 8px rgba(255, 255, 255, 0.3));
+  }
+}
+
+.pickaxe-progress-name {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.pickaxe-progress-name.next {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: bold;
+}
+
+/* Progress Bar Wrapper */
+.pickaxe-progress-bar-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+/* Progress Bar */
+.pickaxe-progress-bar {
+  width: 100%;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.pickaxe-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, currentColor 0%, currentColor 100%);
+  border-radius: 8px;
+  transition: width 0.5s ease, background-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pickaxe-progress-fill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+.pickaxe-progress-fill.affordable {
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Progress Text */
+.pickaxe-progress-text {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.pickaxe-progress-text span.affordable {
+  color: #4ade80;
+  font-weight: bold;
+}
+
+.affordable-badge {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  color: #000;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: bold;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Max Tier Display */
+.pickaxe-progress-max {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(255, 23, 68, 0.2) 0%, rgba(139, 69, 19, 0.2) 100%);
+  border: 2px solid rgba(255, 23, 68, 0.5);
+  border-radius: 8px;
+  padding: 12px 16px;
+  backdrop-filter: blur(8px);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(255, 23, 68, 0.3);
+  width: 100%;
+}
+
+.pickaxe-progress-max-text {
+  font-family: 'Pixelify Sans', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  letter-spacing: 0.5px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .pickaxe-progress-content {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  
+  .pickaxe-progress-current,
+  .pickaxe-progress-next {
+    min-width: 45px;
+  }
+  
+  .pickaxe-progress-bar {
+    height: 18px;
+  }
+  
+  .pickaxe-progress-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .pickaxe-progress-name {
+    font-size: 9px;
+  }
+  
+  .pickaxe-progress-text {
+    font-size: 9px;
+    gap: 4px;
+  }
+  
+  .pickaxe-progress-max-text {
+    font-size: 10px;
+  }
+}
+

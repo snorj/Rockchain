@@ -1,0 +1,31 @@
+{
+  "network": "sepolia",
+  "chainId": "11155111",
+  "goldToken": "0xD28C2fb4cb36Dad49E05B80E3E8acD856171E26C",
+  "pickaxeNFT": "0xE6Fe1C3B6Ba737925938d18F7a3a38B8AC2da4a3",
+  "pickaxeNFTVersion": "V2",
+  "gemNFT": "0x3Ef5e009FdEf2438d991368CF056aF1f35fe55C0",
+  "game": "0x0D1bf8420216af77F9f8E665fEd7eF57c35a98cB",
+  "gameVersion": "V3",
+  "deployedAt": "2025-11-04T08:03:03.421Z",
+  "deployer": "0x130ab29176Da05064F1Ef0664cEC7112c717e6a9",
+  "pricingModel": "per-second-8x-economy",
+  "levelCosts": {
+    "level0": "0 GLD/sec (FREE)",
+    "level1": "8 GLD/sec (480/min)",
+    "level2": "50 GLD/sec (3000/min)",
+    "level3": "420 GLD/sec (25200/min)",
+    "level4": "3500 GLD/sec (210000/min)"
+  },
+  "purchaseRange": {
+    "minSeconds": 15,
+    "maxSeconds": 3600
+  },
+  "pickaxeCosts": {
+    "wooden": 0,
+    "iron": 750,
+    "steel": 7000,
+    "mythril": 52000,
+    "adamantite": 380000
+  }
+}

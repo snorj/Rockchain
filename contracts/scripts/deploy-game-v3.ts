@@ -86,13 +86,13 @@ async function main() {
     gameVersion: 'V3',
     deployedAt: new Date().toISOString(),
     deployer: deployer.address,
-    pricingModel: 'per-second',
+    pricingModel: 'per-second-8x-economy',
     levelCosts: {
       level0: '0 GLD/sec (FREE)',
-      level1: '7 GLD/sec (420/min)',
-      level2: '40 GLD/sec (2400/min)',
-      level3: '115 GLD/sec (6900/min)',
-      level4: '300 GLD/sec (18000/min)'
+      level1: '8 GLD/sec (480/min)',
+      level2: '50 GLD/sec (3000/min)',
+      level3: '420 GLD/sec (25200/min)',
+      level4: '3500 GLD/sec (210000/min)'
     },
     purchaseRange: {
       minSeconds: 15,
@@ -100,10 +100,10 @@ async function main() {
     },
     pickaxeCosts: {
       wooden: 0,
-      iron: 500,
-      steel: 1500,
-      mythril: 6000,
-      adamantite: 20000
+      iron: 750,
+      steel: 7000,
+      mythril: 52000,
+      adamantite: 380000
     }
   };
 
@@ -128,12 +128,12 @@ async function main() {
   console.log('  GameV3:', gameV3Address);
   console.log('');
   
-  console.log('💰 Level Costs (per second):');
+  console.log('💰 Level Costs (per second) - 8x Exponential Economy:');
   console.log('  Level 0: FREE (unlimited)');
-  console.log('  Level 1: 7 GLD/sec (420 GLD/min)');
-  console.log('  Level 2: 40 GLD/sec (2,400 GLD/min)');
-  console.log('  Level 3: 115 GLD/sec (6,900 GLD/min)');
-  console.log('  Level 4: 300 GLD/sec (18,000 GLD/min)');
+  console.log('  Level 1: 8 GLD/sec (480 GLD/min)');
+  console.log('  Level 2: 50 GLD/sec (3,000 GLD/min)');
+  console.log('  Level 3: 420 GLD/sec (25,200 GLD/min)');
+  console.log('  Level 4: 3500 GLD/sec (210,000 GLD/min)');
   console.log('');
   
   console.log('⏱️  Purchase Range:');
@@ -141,12 +141,12 @@ async function main() {
   console.log('  Maximum: 3,600 seconds (60 minutes)');
   console.log('');
   
-  console.log('⛏️  Pickaxe Costs:');
+  console.log('⛏️  Pickaxe Costs (Updated - Balanced Progression):');
   console.log('  Wooden: FREE');
-  console.log('  Iron: 500 GLD');
-  console.log('  Steel: 1,500 GLD');
-  console.log('  Mythril: 6,000 GLD');
-  console.log('  Adamantite: 20,000 GLD');
+  console.log('  Iron: 750 GLD');
+  console.log('  Steel: 7,000 GLD');
+  console.log('  Mythril: 52,000 GLD');
+  console.log('  Adamantite: 380,000 GLD');
   console.log('');
   
   console.log('✅ All contracts deployed and configured!');

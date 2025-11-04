@@ -27,16 +27,16 @@ contract GameV3 {
         "diamond", "amethyst"                                  // Tier 5 gems (23-24)
     ];
     
-    // Material values in GLD
+    // Material values in GLD (8x exponential economy)
     uint256[] public materialValues = [
-        1, 3, 3, 5,                      // Tier 1
-        10, 8, 12,                       // Tier 2
-        25, 50, 60, 55, 55,              // Tier 3 ores
-        100, 110,                        // Tier 4 ores
-        300, 350, 320,                   // Tier 5 ores
-        100,                             // Tier 3 gem (emerald)
-        120, 120, 110, 150, 150,         // Tier 4 gems
-        500, 400                         // Tier 5 gems
+        2, 4, 4, 7,                      // Tier 1
+        20, 18, 50,                      // Tier 2
+        150, 130, 220, 165, 110,         // Tier 3 ores
+        1100, 1200,                      // Tier 4 ores
+        9000, 11000, 13000,              // Tier 5 ores
+        2000,                            // Tier 3 gem (emerald)
+        2200, 2000, 1800, 3600, 3800,    // Tier 4 gems
+        38000, 42000                     // Tier 5 gems
     ];
     
     // Level configuration
@@ -102,7 +102,7 @@ contract GameV3 {
         pickaxeNFT = PickaxeNFTV2(_pickaxeNFT);
         gemNFT = GemNFT(_gemNFT);
         
-        // Initialize level configurations with per-second pricing
+        // Initialize level configurations with 8x exponential pricing
         levels[0] = LevelConfig({
             name: "Beginner Mine",
             costPerSecond: 0,  // FREE
@@ -110,26 +110,26 @@ contract GameV3 {
         });
         
         levels[1] = LevelConfig({
-            name: "Iron Mine",
-            costPerSecond: 7,  // 7 gold/sec (420/min)
+            name: "Stone Mine",
+            costPerSecond: 8,  // 8 gold/sec (480/min)
             requiredTier: PickaxeNFTV2.Tier.Iron
         });
         
         levels[2] = LevelConfig({
             name: "Precious Mine",
-            costPerSecond: 40,  // 40 gold/sec (2400/min)
+            costPerSecond: 50,  // 50 gold/sec (3000/min)
             requiredTier: PickaxeNFTV2.Tier.Steel
         });
         
         levels[3] = LevelConfig({
             name: "Gem Cavern",
-            costPerSecond: 115,  // 115 gold/sec (6900/min)
+            costPerSecond: 420,  // 420 gold/sec (25200/min)
             requiredTier: PickaxeNFTV2.Tier.Mythril
         });
         
         levels[4] = LevelConfig({
             name: "Mythic Depths",
-            costPerSecond: 300,  // 300 gold/sec (18000/min)
+            costPerSecond: 3500,  // 3500 gold/sec (210000/min)
             requiredTier: PickaxeNFTV2.Tier.Adamantite
         });
     }

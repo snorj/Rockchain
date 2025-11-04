@@ -47,81 +47,114 @@ export const LEVELS: Record<LevelId, LevelConfig> = {
   2: {
     id: 2,
     name: 'Stone Mine',
-    description: 'Deeper tunnels rich with common metals.',
+    description: 'Deeper tunnels with iron veins and rare silver deposits.',
     requiredPickaxe: 'stone',
-    accessCost: 7,        // Per second cost (420/min)
+    accessCost: 8,        // Per second cost (480/min)
     accessDuration: 60,   // Not used - flexible purchasing
     backgroundColor: '#1a1a1a',
     spawns: [
-      { material: 'stone', weight: 10 },
-      { material: 'copper', weight: 10 },
-      { material: 'tin', weight: 10 },
-      { material: 'coal', weight: 15 },
-      { material: 'iron', weight: 25 },
-      { material: 'lead', weight: 15 },
-      { material: 'cobalt', weight: 15 }
+      { material: 'stone', weight: 3 },
+      { material: 'copper', weight: 3 },
+      { material: 'tin', weight: 2 },
+      { material: 'coal', weight: 2 },
+      { material: 'iron', weight: 30 },
+      { material: 'lead', weight: 25 },
+      { material: 'cobalt', weight: 20 },
+      { material: 'silver', weight: 15 }
     ]
   },
 
   3: {
     id: 3,
     name: 'Precious Mine',
-    description: 'Ancient veins of valuable metals and the first gems.',
+    description: 'Ancient veins of gold, platinum, and rare emeralds.',
     requiredPickaxe: 'steel',
-    accessCost: 40,       // Per second cost (2400/min)
+    accessCost: 50,       // Per second cost (3000/min)
     accessDuration: 60,   // Not used - flexible purchasing
     backgroundColor: '#1a1526',
     spawns: [
-      { material: 'iron', weight: 10 },
-      { material: 'lead', weight: 10 },
-      { material: 'silver', weight: 20 },
-      { material: 'gold', weight: 20 },
-      { material: 'platinum', weight: 15 },
-      { material: 'titanium', weight: 15 },
-      { material: 'tungsten', weight: 10 }
+      { material: 'stone', weight: 1 },
+      { material: 'copper', weight: 1 },
+      { material: 'tin', weight: 1 },
+      { material: 'coal', weight: 1 },
+      { material: 'iron', weight: 2 },
+      { material: 'lead', weight: 2 },
+      { material: 'cobalt', weight: 2 },
+      { material: 'silver', weight: 2 },
+      { material: 'gold', weight: 30 },
+      { material: 'platinum', weight: 24 },
+      { material: 'titanium', weight: 18 },
+      { material: 'tungsten', weight: 10 },
+      { material: 'emerald', weight: 5 },
+      { material: 'ruby', weight: 1 }
     ]
   },
 
   4: {
     id: 4,
     name: 'Gem Cavern',
-    description: 'Crystalline caves filled with precious gems and rare metals.',
+    description: 'Crystalline caves filled with sapphires, rubies, and ultra-rare diamonds.',
     requiredPickaxe: 'mythril',
-    accessCost: 115,      // Per second cost (6900/min)
+    accessCost: 420,      // Per second cost (25200/min)
     accessDuration: 60,   // Not used - flexible purchasing
     backgroundColor: '#1a0d26',
     spawns: [
-      { material: 'silver', weight: 5 },
-      { material: 'gold', weight: 5 },
-      { material: 'palladium', weight: 10 },
-      { material: 'orichalcum', weight: 10 },
-      { material: 'emerald', weight: 15 },
-      { material: 'ruby', weight: 15 },
-      { material: 'sapphire', weight: 15 },
-      { material: 'topaz', weight: 10 },
-      { material: 'aquamarine', weight: 10 },
-      { material: 'peridot', weight: 5 }
+      { material: 'stone', weight: 1 },
+      { material: 'copper', weight: 1 },
+      { material: 'tin', weight: 1 },
+      { material: 'coal', weight: 1 },
+      { material: 'iron', weight: 1 },
+      { material: 'lead', weight: 1 },
+      { material: 'cobalt', weight: 1 },
+      { material: 'silver', weight: 1 },
+      { material: 'gold', weight: 1 },
+      { material: 'platinum', weight: 1 },
+      { material: 'titanium', weight: 1 },
+      { material: 'tungsten', weight: 1 },
+      { material: 'emerald', weight: 3 },
+      { material: 'palladium', weight: 22 },
+      { material: 'orichalcum', weight: 20 },
+      { material: 'topaz', weight: 7 },
+      { material: 'aquamarine', weight: 6 },
+      { material: 'peridot', weight: 4 },
+      { material: 'ruby', weight: 12 },
+      { material: 'sapphire', weight: 13 },
+      { material: 'diamond', weight: 1 }
     ]
   },
 
   5: {
     id: 5,
     name: 'Mythic Depths',
-    description: 'The deepest reaches where legendary materials form.',
+    description: 'The deepest reaches with mythril, adamantite, and legendary diamonds worth fortunes.',
     requiredPickaxe: 'adamantite',
-    accessCost: 300,      // Per second cost (18000/min)
+    accessCost: 3500,     // Per second cost (210000/min)
     accessDuration: 60,   // Not used - flexible purchasing
     backgroundColor: '#0d0d1a',
     spawns: [
-      { material: 'platinum', weight: 5 },
-      { material: 'orichalcum', weight: 10 },
-      { material: 'mythril', weight: 15 },
-      { material: 'adamantite', weight: 15 },
-      { material: 'meteorite', weight: 10 },
-      { material: 'diamond', weight: 15 },
-      { material: 'amethyst', weight: 15 },
-      { material: 'ruby', weight: 8 },
-      { material: 'sapphire', weight: 7 }
+      { material: 'stone', weight: 1 },
+      { material: 'copper', weight: 1 },
+      { material: 'tin', weight: 1 },
+      { material: 'coal', weight: 1 },
+      { material: 'iron', weight: 1 },
+      { material: 'lead', weight: 1 },
+      { material: 'cobalt', weight: 1 },
+      { material: 'silver', weight: 1 },
+      { material: 'gold', weight: 1 },
+      { material: 'platinum', weight: 1 },
+      { material: 'titanium', weight: 1 },
+      { material: 'tungsten', weight: 1 },
+      { material: 'palladium', weight: 2 },
+      { material: 'orichalcum', weight: 2 },
+      { material: 'topaz', weight: 1 },
+      { material: 'aquamarine', weight: 1 },
+      { material: 'mythril', weight: 24 },
+      { material: 'adamantite', weight: 22 },
+      { material: 'meteorite', weight: 18 },
+      { material: 'ruby', weight: 1 },
+      { material: 'sapphire', weight: 1 },
+      { material: 'diamond', weight: 10 },
+      { material: 'amethyst', weight: 6 }
     ]
   }
 };
