@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { usePrivy, useWallets } from '@privy-io/react-auth';
+import { useWallets } from '@privy-io/react-auth';
 import { useGameStore } from '../../store/gameStore';
 import { useGoldBalance } from '../../blockchain/hooks/useGoldBalance';
 import { usePickaxe } from '../../blockchain/hooks/usePickaxe';
@@ -31,11 +31,9 @@ export const GameUI: React.FC = () => {
   const { balance: blockchainBalance, isLoading: balanceLoading } = useGoldBalance(embeddedWallet?.address);
   
   // Fetch blockchain pickaxe
-  const { pickaxe: blockchainPickaxe, hasPickaxe, isLoading: pickaxeLoading } = usePickaxe(embeddedWallet?.address);
+  const { pickaxe: blockchainPickaxe, isLoading: pickaxeLoading } = usePickaxe(embeddedWallet?.address);
   
   const gold = useGameStore(state => state.gold);
-  const currentLevel = useGameStore(state => state.currentLevel);
-  const currentPickaxe = useGameStore(state => state.currentPickaxe);
   
   /**
    * Convert blockchain tier (0-4) to game pickaxe tier name
@@ -171,7 +169,7 @@ export const GameUI: React.FC = () => {
   /**
    * Handle materials sold (called by hooks)
    */
-  const handleMaterialsSold = (goldEarned: number) => {
+  const handleMaterialsSold = (_goldEarned: number) => {
     // Clear inventory
     // Note: Balance will sync automatically from blockchain via useGoldBalance hook
     useGameStore.getState().clearInventory();
