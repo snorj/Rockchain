@@ -4,7 +4,6 @@ import { OreNode } from '../entities/OreNode';
 import { useGameStore } from '../../store/gameStore';
 import type { MaterialType } from '../config/materials';
 import type { LevelId } from '../config/levels';
-import { LEVELS } from '../config/levels';
 import type { PickaxeTier } from '../config/pickaxes';
 import { PICKAXES } from '../config/pickaxes';
 /**
@@ -13,7 +12,7 @@ import { PICKAXES } from '../config/pickaxes';
  */
 export class MiningScene extends Phaser.Scene {
   private oreSpawner!: OreSpawner;
-  private background!: Phaser.GameObjects.Graphics;
+  private background!: Phaser.GameObjects.Image;
   
   // Multiple mining targets
   private miningOres: Set<OreNode> = new Set();
@@ -60,31 +59,21 @@ export class MiningScene extends Phaser.Scene {
   }
 
   /**
-   * Create simple gradient background based on current level
+   * Create background image based on current level
    */
   private createBackground() {
     const gameState = useGameStore.getState();
-    const level = LEVELS[gameState.currentLevel];
+    const backgroundKey = `bg-level-${gameState.currentLevel}`;
     
-    this.background = this.add.graphics();
+    // Create background image
+    this.background = this.add.image(400, 300, backgroundKey);
     
-    // Create gradient from dark to slightly lighter
-    const colorTop = parseInt(level.backgroundColor.replace('#', ''), 16);
-    const colorBottom = this.lightenColor(colorTop, 20);
-    
-    this.background.fillGradientStyle(colorTop, colorTop, colorBottom, colorBottom, 1);
-    this.background.fillRect(0, 0, 800, 600);
+    // Scale to fit the game canvas (800x600)
+    this.background.setDisplaySize(800, 600);
     this.background.setDepth(-10);
-  }
-
-  /**
-   * Lighten a color by a percentage
-   */
-  private lightenColor(color: number, percent: number): number {
-    const r = Math.min(255, ((color >> 16) & 0xff) + percent);
-    const g = Math.min(255, ((color >> 8) & 0xff) + percent);
-    const b = Math.min(255, (color & 0xff) + percent);
-    return (r << 16) | (g << 8) | b;
+    
+    // Apply subtle blur effect to background
+    this.background.preFX?.addBlur(0, 1, 1, 0.5, 0xffffff, 2);
   }
 
   /**
@@ -266,7 +255,6 @@ export class MiningScene extends Phaser.Scene {
     console.log(`✨ Mined ${data.material} (worth ${data.value} gold)`);
     
     // Clean up tracking
-    const startTime = this.miningStartTimes.get(data.node);
     this.miningStartTimes.delete(data.node);
     
     // Add to inventory
@@ -316,13 +304,14 @@ export class MiningScene extends Phaser.Scene {
     // Respawn all ores
     this.oreSpawner.spawnInitialOres();
     
-    // Update background
-    this.background.clear();
-    const level = LEVELS[levelId];
-    const colorTop = parseInt(level.backgroundColor.replace('#', ''), 16);
-    const colorBottom = this.lightenColor(colorTop, 20);
-    this.background.fillGradientStyle(colorTop, colorTop, colorBottom, colorBottom, 1);
-    this.background.fillRect(0, 0, 800, 600);
+    // Update background image
+    const backgroundKey = `bg-level-${levelId}`;
+    this.background.setTexture(backgroundKey);
+    this.background.setDisplaySize(800, 600);
+    
+    // Reapply subtle blur effect to new background
+    this.background.preFX?.clear();
+    this.background.preFX?.addBlur(0, 1, 1, 0.5, 0xffffff, 2);
     
     // Setup new timer if needed
     if (this.levelTimer) {

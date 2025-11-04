@@ -24,6 +24,9 @@ export class PreloadScene extends Phaser.Scene {
     
     // Load particle texture
     this.loadParticles();
+    
+    // Load level backgrounds
+    this.loadLevelBackgrounds();
   }
 
   /**
@@ -98,6 +101,20 @@ export class PreloadScene extends Phaser.Scene {
     graphics.fillRect(0, 0, 4, 4);
     graphics.generateTexture('particle', 4, 4);
     graphics.destroy();
+  }
+
+  /**
+   * Load level background images
+   */
+  private loadLevelBackgrounds() {
+    console.log(`🏔️  Loading level backgrounds...`);
+    
+    // Load backgrounds for levels 1-5
+    for (let i = 1; i <= 5; i++) {
+      const key = `bg-level-${i}`;
+      const path = `/assets/backgrounds/lvl${i}.png`;
+      this.load.image(key, path);
+    }
   }
 
   create() {
