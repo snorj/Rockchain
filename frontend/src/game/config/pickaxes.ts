@@ -71,7 +71,7 @@ export const PICKAXES: Record<PickaxeTier, PickaxeConfig> = {
     name: 'Adamantite Pickaxe',
     tier: 5,
     miningSpeed: 4.5,      // 4.5x faster (0.35x mining time)
-    price: 380000,         // Balanced progression
+    price: 380_000,        // Balanced progression (380k GLD)
     levelUnlocked: 5,
     spritePath: '/assets/sprites/pickaxes/adamantite/pickaxe-adamantite.png',
     color: '#FF1744'

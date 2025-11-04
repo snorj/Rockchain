@@ -52,7 +52,8 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
     try {
       setPurchaseState('approving');
       await onApprove(seconds);
-      setPurchaseState('approved');
+      // Automatically proceed to start the session after approval
+      await handleStart();
     } catch (error: any) {
       console.error('Approval failed:', error);
       setPurchaseState('error');
@@ -172,14 +173,14 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
         return (
           <>
             <div className="modal-header">
-              <h2 className="modal-title">Approve Transaction</h2>
-              <p className="modal-subtitle">Step 1 of 2</p>
+              <h2 className="modal-title">Processing Transaction</h2>
+              <p className="modal-subtitle">Approving and starting session</p>
             </div>
             
             <div className="modal-body processing">
               <div className="spinner"></div>
               <p className="processing-message">
-                Approving {totalCost} GLD for the Game contract
+                Approving {totalCost} GLD and starting your mining session...
               </p>
               
               <div className="transaction-steps">
@@ -197,72 +198,12 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
           </>
         );
         
-      case 'approved':
-        return (
-          <>
-            <div className="modal-header success">
-              <h2 className="modal-title">Approved!</h2>
-              <p className="modal-subtitle">Ready to start mining</p>
-            </div>
-            
-            <div className="modal-body">
-              <div className="purchase-details">
-                <div className="detail-row">
-                  <span className="detail-label">Level:</span>
-                  <span className="detail-value highlight">{level.name}</span>
-                </div>
-                
-                <div className="detail-row">
-                  <span className="detail-label">Duration:</span>
-                  <span className="detail-value highlight">{formatTime(seconds)}</span>
-                </div>
-                
-                <div className="detail-row">
-                  <span className="detail-label">Cost:</span>
-                  <span className="detail-value">{totalCost} GLD</span>
-                </div>
-              </div>
-              
-              <div className="transaction-steps">
-                <div className="step completed">
-                  <div className="step-number">✓</div>
-                  <div className="step-label">Approved</div>
-                </div>
-                <div className="step-connector"></div>
-                <div className="step">
-                  <div className="step-number">2</div>
-                  <div className="step-label">Start Mining</div>
-                </div>
-              </div>
-              
-              <p className="success-hint" style={{ marginTop: '1rem', textAlign: 'center' }}>
-                Click "Start Mining" to begin your session
-              </p>
-            </div>
-            
-            <div className="modal-footer">
-              <button 
-                className="btn-cancel" 
-                onClick={onCancel}
-              >
-                Cancel
-              </button>
-              <button 
-                className="btn-confirm" 
-                onClick={handleStart}
-              >
-                Start Mining
-              </button>
-            </div>
-          </>
-        );
-        
       case 'purchasing':
         return (
           <>
             <div className="modal-header">
               <h2 className="modal-title">Starting Session...</h2>
-              <p className="modal-subtitle">Step 2 of 2</p>
+              <p className="modal-subtitle">Almost there!</p>
             </div>
             
             <div className="modal-body processing">
@@ -274,12 +215,12 @@ export const LevelPurchaseModal: React.FC<LevelPurchaseModalProps> = ({
               <div className="transaction-steps">
                 <div className="step completed">
                   <div className="step-number">✓</div>
-                  <div className="step-label">Approve GLD</div>
+                  <div className="step-label">Approved</div>
                 </div>
                 <div className="step-connector completed"></div>
                 <div className="step active">
                   <div className="step-number">2</div>
-                  <div className="step-label">Start Session</div>
+                  <div className="step-label">Starting</div>
                 </div>
               </div>
             </div>
